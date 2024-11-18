@@ -8,7 +8,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
 import { Skeleton } from '@/components/ui/skeleton';
-import { processingCosts, processingCosts as processingcostSchema } from '@/db/schema';
+import { processingCosts as processingcostSchema } from '@/db/schema';
 import { useBulkCreateprocessingcosts } from '@/features/processingcost/api/use-bulk-create-processingcosts';
 import { useBulkDeleteprocessingcosts } from '@/features/processingcost/api/use-bulk-delete-processingcosts';
 import { useGetProcessingcosts } from '@/features/processingcost/api/use-get-processingcosts';

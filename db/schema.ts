@@ -399,6 +399,7 @@ export const productGroups = pgTable(
     nameIdx: index('idx_product_group_name').on(table.name)
   })
 );
+export const insertProductGroupSchema = createInsertSchema(productGroups);
 
 export const productGroupProducts = pgTable(
   'product_group_products',
@@ -549,6 +550,7 @@ export const productStorages = pgTable(
     ).on(table.inclusionType)
   })
 );
+export const insertProductStorageSchema = createInsertSchema(productStorages);
 export const periods = pgTable(
   'periods',
   {
@@ -578,6 +580,7 @@ export const periodGroups = pgTable(
     nameIdx: index('idx_period_groups_name').on(table.name)
   })
 );
+export const insertPeriodGroupSchema = createInsertSchema(periodGroups);
 
 // Junction table for period groups and periods
 export const periodGroupPeriods = pgTable(
@@ -786,7 +789,6 @@ export const unitConversions = pgTable(
   })
 );
 export const insertunitConversionSchema = createInsertSchema(unitConversions);
-
 export const units = pgTable(
   'units',
   {
@@ -825,6 +827,7 @@ export const assetsConstraints = pgTable(
   })
 );
 export const insertAssetsConstraintSchema = createInsertSchema(assetsConstraints);
+
 export const cashAccounts = pgTable(
   'cash_accounts',
   {
@@ -846,7 +849,8 @@ export const cashAccounts = pgTable(
     interestCheck: sql`CHECK (${table.interest} >= 0 AND ${table.interest} <= 1)`
   })
 );
-
+export const insertCashAccountSchema = createInsertSchema(cashAccounts);
+                             
 export const customConstraints = pgTable(
   'custom_constraints',
   {
@@ -909,6 +913,9 @@ export const facilityExpenses = pgTable(
     };
   }
 );
+
+export const insertFacilityExpenseSchema = createInsertSchema(facilityExpenses);
+
 export const linearRanges = pgTable(
   'linear_ranges',
   {
@@ -927,7 +934,6 @@ export const linearRanges = pgTable(
   })
 );
 export const insertlinearrangeSchema = createInsertSchema(linearRanges);
-
 export const indicatorConstraints = pgTable(
   'indicator_constraints',
   {
@@ -974,7 +980,6 @@ export const objectiveMembers = pgTable(
   })
 );
 export const insertObjectiveMemberSchema = createInsertSchema(objectiveMembers);
-
 export const paths = pgTable(
   'paths',
   {
@@ -1145,6 +1150,8 @@ export const bom = pgTable(
     endProductIdx: index('idx_bom_end_product').on(table.endProductId)
   })
 );
+export const insertBomSchema = createInsertSchema(bom);
+
 
 export const bomComponents = pgTable(
   'bom_components',
@@ -1163,7 +1170,7 @@ export const bomComponents = pgTable(
     productIdIdx: index('idx_bom_components_product_id').on(table.productId)
   })
 );
-
+export const insertBomComponentsSchema = createInsertSchema(bomComponents);
 export const bomByproducts = pgTable(
   'bom_byproducts',
   {
@@ -1181,6 +1188,9 @@ export const bomByproducts = pgTable(
     productIdIdx: index('idx_bom_byproducts_product_id').on(table.productId)
   })
 );
+export const insertBomByproductsSchema = createInsertSchema(bomByproducts);
+
+
 export const production_no = pgTable(
   'production_no',
   {
@@ -1226,6 +1236,7 @@ export const production_no = pgTable(
     )
   })
 );
+export const insertProductionNoSchema = createInsertSchema(production_no);
 
 export const siteStateChanges = pgTable(
   'site_state_changes',
@@ -1249,8 +1260,491 @@ export const siteStateChanges = pgTable(
     ).on(table.timePeriodId)
   })
 );
+export const insertSiteStateChangesSchema = createInsertSchema(siteStateChanges);
 
+export const saleBatches = pgTable(
+  'sale_batches',
+  {
+    id: serial('id').primaryKey(),
+    sourceId: integer('source_id')
+      .notNull()
+      .references(() => facilities.id),
+    productId: integer('product_id')
+      .notNull()
+      .references(() => products.id),
+    type: varchar('type', { length: 20 }).notNull(),
+    batchSize: decimal('batch_size', { precision: 15, scale: 2 }).notNull(),
+    stepSize: decimal('step_size', { precision: 15, scale: 2 }),
+    pricePerUnit: decimal('price_per_unit', {
+      precision: 15,
+      scale: 2
+    }).notNull(),
+    currency: varchar('currency', { length: 10 }).notNull(),
+    timePeriodId: integer('time_period_id').references(() => periods.id)
+  },
+  (table) => ({
+    typeCheck: sql`CHECK (${table.type} IN ('Exact', 'Starts From'))`,
+    idxSaleBatchesSource: index('idx_sale_batches_source').on(table.sourceId),
+    idxSaleBatchesProduct: index('idx_sale_batches_product').on(
+      table.productId
+    ),
+    idxSaleBatchesTimePeriod: index('idx_sale_batches_time_period').on(
+      table.timePeriodId
+    )
+  })
+);
+export const insertSaleBatchSchema = createInsertSchema(saleBatches);
 ////SIM
+export const co2Emissions = pgTable(
+  'co2_emissions',
+  {
+    id: serial('id').primaryKey(), // Unique identifier for each record
+    facilityId: integer('facility_id')
+      .notNull()
+      .references(() => facilities.id), // Foreign key to Facilities table
+    co2EmissionSource: varchar('co2_emission_source', { length: 50 }).notNull(), // Source of CO2 emissions
+    co2Produced: decimal('co2_produced', { precision: 15, scale: 2 }).notNull(), // Amount of CO2 produced
+    timeUnit: varchar('time_unit', { length: 50 }), // Time unit for the CO2 emissions
+    productUnit: varchar('product_unit', { length: 50 }), // Product unit used for Facility Size or Carrying
+    timePeriodId: integer('time_period_id')
+      .notNull()
+      .references(() => periods.id) // Foreign key to Periods table
+  },
+  (table) => {
+    return {
+      idxCo2EmissionsFacilitySource: index(
+        'idx_co2_emissions_facility_source'
+      ).on(table.facilityId, table.co2EmissionSource) // Index for faster querying by facility_id and co2_emission_source
+    };
+  }
+);
+
+export const co2Processing = pgTable(
+  'co2_processing',
+  {
+    id: serial('id').primaryKey(), // Unique identifier for each record
+    facilityId: integer('facility_id')
+      .notNull()
+      .references(() => facilities.id), // Foreign key to Facilities table
+    productId: integer('product_id')
+      .notNull()
+      .references(() => products.id), // Foreign key to Products table
+    processingType: varchar('processing_type', { length: 50 }).notNull(), // Type of processing
+    units: varchar('units', { length: 50 }).notNull(), // Unit for calculating CO2 emission
+    co2Produced: decimal('co2_produced', { precision: 15, scale: 2 }).notNull(), // Amount of CO2 produced per unit
+    timePeriodId: integer('time_period_id')
+      .notNull()
+      .references(() => periods.id), // Foreign key to Periods table
+    co2CalculationFormula: text('co2_calculation_formula') // Formula for CO2 calculation
+  },
+  (table) => {
+    return {
+      idxCo2ProcessingFacilityProduct: index(
+        'idx_co2_processing_facility_product'
+      ).on(table.facilityId, table.productId, table.processingType) // Index for querying by facility_id, product_id, and processing_type
+    };
+  }
+);
+
+export const demandForecast = pgTable(
+  'demand_forecast',
+  {
+    id: serial('id').primaryKey(), // Unique identifier for each record
+    facilityId: integer('facility_id')
+      .notNull()
+      .references(() => facilities.id), // Foreign key to Facilities table
+    productId: integer('product_id')
+      .notNull()
+      .references(() => products.id), // Foreign key to Products table
+    type: varchar('type', { length: 50 }).notNull(), // Type of demand definition
+    parameters: jsonb('parameters').notNull(), // Demand definition parameters
+    timePeriodId: integer('time_period_id')
+      .notNull()
+      .references(() => periods.id) // Foreign key to Periods table
+  },
+  (table) => {
+    return {
+      idxDemandForecastFacilityProduct: index(
+        'idx_demand_forecast_facility_product'
+      ).on(table.facilityId, table.productId, table.type) // Index for querying by facility_id, product_id, and type
+    };
+  }
+);
+
+export const events = pgTable(
+  'events',
+  {
+    id: serial('id').primaryKey(), // Unique identifier for each event
+    name: varchar('name', { length: 100 }).notNull(), // Name of the event
+    eventType: varchar('event_type', { length: 50 }).notNull(), // Type of the event
+    parameters: jsonb('parameters'), // Event-specific parameters
+    occurrenceType: varchar('occurrence_type', { length: 50 }).notNull(), // Occurrence type
+    occurrenceTime: varchar('occurrence_time', { length: 50 }).notNull(), // Event occurrence time
+    triggerEventName: varchar('trigger_event_name', { length: 100 }), // Reference to the name of another event that triggers this event
+    probability: decimal('probability', { precision: 3, scale: 2 }).notNull() // Probability of the event occurring
+  },
+  (table) => {
+    return {
+      idxEventsNameType: index('idx_events_name_type').on(
+        table.name,
+        table.eventType
+      ), // Index for faster querying by event name and type
+      idxEventsTrigger: index('idx_events_trigger').on(table.triggerEventName) // Index for querying by trigger event name
+    };
+  }
+);
+
+export const fleets = pgTable(
+  'fleets',
+  {
+    id: serial('id').primaryKey(), // Unique identifier for each fleet record
+    facilityId: integer('facility_id')
+      .notNull()
+      .references(() => facilities.id), // Foreign key to Facilities table
+    vehicleTypeId: integer('vehicle_type_id')
+      .notNull()
+      .references(() => vehicleTypes.id), // Foreign key to Vehicle Types table
+    quantity: integer('quantity').notNull(), // Number of vehicles in the fleet; 0 means unlimited
+    cost: decimal('cost', { precision: 15, scale: 2 }).notNull(), // Cost of owning the fleet per TimeUnit
+    currency: varchar('currency', { length: 10 }).notNull(), // Currency type for the cost
+    timeUnit: varchar('time_unit', { length: 50 }) // Time unit for the cost calculation
+  },
+  (table) => {
+    return {
+      idxFleetsFacilityVehicle: index('idx_fleets_facility_vehicle').on(
+        table.facilityId,
+        table.vehicleTypeId
+      ) // Index for querying by facility and vehicle type
+    };
+  }
+);
+export const insertFleetsSchema = createInsertSchema(fleets);
+
+export const inventory = pgTable(
+  'inventory',
+  {
+    id: serial('id').primaryKey(), // Unique identifier for each inventory record
+    facilityId: integer('facility_id')
+      .notNull()
+      .references(() => facilities.id), // Foreign key to Facilities table
+    productId: integer('product_id')
+      .notNull()
+      .references(() => products.id), // Foreign key to Products table
+    policyType: varchar('policy_type', { length: 50 }).notNull(), // Type of inventory policy
+    policyParameters: jsonb('policy_parameters'), // JSONB field for policy-specific parameters
+    initialStock: decimal('initial_stock', {
+      precision: 15,
+      scale: 2
+    }).notNull(), // Initial stock in units
+    periodicCheck: boolean('periodic_check').notNull().default(false), // Whether periodic inventory check is enabled
+    period: integer('period'), // Period for periodic inventory check
+    firstPeriodicCheck: varchar('first_periodic_check', { length: 50 }), // Start time for periodic check
+    policyBasis: varchar('policy_basis', { length: 50 }), // Policy basis
+    stockCalculationWindow: integer('stock_calculation_window'), // Number of days for mean daily demand calculation
+    timeUnit: varchar('time_unit', { length: 50 }).notNull(), // Time unit for the period
+    minSplitRatio: decimal('min_split_ratio', {
+      precision: 3,
+      scale: 2
+    }), // Minimum split ratio for partial shipments
+    timePeriodId: integer('time_period_id')
+      .notNull()
+      .references(() => periods.id), // Foreign key to Periods table
+    inclusionType: varchar('inclusion_type', { length: 50 }).notNull() // Inclusion status
+  },
+  (table) => {
+    return {
+      idxInventoryFacilityProduct: index('idx_inventory_facility_product').on(
+        table.facilityId,
+        table.productId
+      ), // Index for querying by facility and product
+      idxInventoryPolicyType: index('idx_inventory_policy_type').on(
+        table.policyType
+      ) // Index for querying by policy type
+    };
+  }
+);
+
+export const loadingUnloadingGates = pgTable(
+  'loading_unloading_gates',
+  {
+    id: serial('id').primaryKey(), // Unique identifier for each gate record
+    name: varchar('name', { length: 100 }).notNull(), // Name of the gate
+    facilityId: integer('facility_id')
+      .notNull()
+      .references(() => facilities.id), // Foreign key to Facilities table
+    type: varchar('type', { length: 50 }).notNull(), // Type of the gate
+    vehicleTypes: jsonb('vehicle_types').notNull(), // JSONB field specifying vehicle types allowed at the gate
+    numberOfGates: integer('number_of_gates').notNull(), // Number of loading/unloading areas
+    units: varchar('units', { length: 50 }).notNull(), // Unit of measurement for processing
+    processingTime: decimal('processing_time', {
+      precision: 15,
+      scale: 2
+    }).notNull(), // Time required to process the unit
+    timeUnit: varchar('time_unit', { length: 50 }).notNull() // Time unit for processing time
+  },
+  (table) => {
+    return {
+      idxGatesFacilityType: index('idx_gates_facility_type').on(
+        table.facilityId,
+        table.type
+      ) // Index for querying by facility and gate type
+    };
+  }
+);
+export const insertLoadingUnloadingGatesSchema = createInsertSchema(loadingUnloadingGates);
+
+export const milkRuns = pgTable(
+  'milk_runs',
+  {
+    id: serial('id').primaryKey(), // Unique identifier for each milk run record
+    sourceId: integer('source_id')
+      .notNull()
+      .references(() => facilities.id), // Foreign key to Facilities table for the source
+    destinations: varchar('destinations').notNull(), // JSONB field specifying destination points and their order
+    vehicleTypeId: integer('vehicle_type_id')
+      .notNull()
+      .references(() => vehicleTypes.id) // Foreign key to Vehicle Types table
+  },
+  (table) => {
+    return {
+      idxMilkRunsSourceVehicle: index('idx_milk_runs_source_vehicle').on(
+        table.sourceId,
+        table.vehicleTypeId
+      ) // Index for querying by source and vehicle type
+    };
+  }
+);
+export const insertMilkRunSchema = createInsertSchema(milkRuns);
+
+export const orderingRules = pgTable(
+  'ordering_rules',
+  {
+    id: serial('id').primaryKey(), // Unique identifier for each ordering rule record
+    destinationId: integer('destination_id')
+      .notNull()
+      .references(() => facilities.id), // Foreign key to Facilities table for the destination
+    productId: integer('product_id')
+      .notNull()
+      .references(() => products.id), // Foreign key to Products table
+    rule: varchar('rule', { length: 50 }).notNull(), // Ordering rule (Can increase, Can decrease)
+    limitUnits: integer('limit_units').notNull() // Limit for increasing or decreasing the ordered amount
+  },
+  (table) => {
+    return {
+      idxOrderingRulesDestinationProduct: index(
+        'idx_ordering_rules_destination_product'
+      ).on(table.destinationId, table.productId) // Index for querying by destination and product
+    };
+  }
+);
+export const insertOrderingRulesSchema = createInsertSchema(orderingRules);
+
+
+export const paymentTerms = pgTable(
+  'payment_terms',
+  {
+    id: serial('id').primaryKey(), // Unique identifier for each payment term record
+    sellerId: integer('seller_id')
+      .notNull()
+      .references(() => facilities.id), // Foreign key to Facilities table for the seller
+    buyerId: integer('buyer_id')
+      .notNull()
+      .references(() => facilities.id), // Foreign key to Facilities table for the buyer
+    productId: integer('product_id')
+      .notNull()
+      .references(() => products.id), // Foreign key to Products table
+    defermentPeriod: decimal('deferment_period', {
+      precision: 10,
+      scale: 2
+    }).notNull(), // Deferment period for payment
+    timeUnit: varchar('time_unit', { length: 50 }).notNull(), // Time unit for the deferment period (e.g., days, months)
+    downPaymentRatio: decimal('down_payment_ratio', {
+      precision: 5,
+      scale: 2
+    }).notNull(), // Down payment ratio as a percentage
+    timePeriodId: integer('time_period_id')
+      .notNull()
+      .references(() => periods.id) // Foreign key to Periods table
+  },
+  (table) => {
+    return {
+      idxPaymentTermsSellerBuyer: index('idx_payment_terms_seller_buyer').on(
+        table.sellerId,
+        table.buyerId,
+        table.productId
+      ) // Index for querying by seller, buyer, and product
+    };
+  }
+);
+
+export const processingTime = pgTable(
+  'processing_time',
+  {
+    id: serial('id').primaryKey(), // Unique identifier for each processing time record
+    facilityId: integer('facility_id')
+      .notNull()
+      .references(() => facilities.id), // Foreign key to Facilities table
+    productId: integer('product_id')
+      .notNull()
+      .references(() => products.id), // Foreign key to Products table
+    type: varchar('type', { length: 50 }).notNull(), // Type of processing (e.g., Inbound order, Outbound shipment)
+    units: varchar('units', { length: 50 }).notNull(), // Units for processing (e.g., order, shipment, pcs, m3, kg)
+    time: decimal('time', { precision: 10, scale: 2 }).notNull(), // Time required for processing
+    timeUnit: varchar('time_unit', { length: 50 }).notNull() // Time unit for processing time (e.g., minutes, hours)
+  },
+  (table) => {
+    return {
+      idxProcessingTimeFacilityProduct: index(
+        'idx_processing_time_facility_product'
+      ).on(table.facilityId, table.productId, table.type) // Index for querying by facility, product, and type
+    };
+  }
+);
+export const insertProcessingTimeSchema = createInsertSchema(processingTime);
+
+export const shipping = pgTable(
+  'shipping_policies',
+  {
+    id: serial('id').primaryKey(), // Unique identifier for each shipping policy record
+    sourceId: integer('source_id')
+      .notNull()
+      .references(() => facilities.id), // Foreign key to Facilities table for the source
+    destinationId: integer('destination_id')
+      .notNull()
+      .references(() => facilities.id), // Foreign key to Facilities table for the destination
+    productId: integer('product_id')
+      .notNull()
+      .references(() => products.id), // Foreign key to Products table
+    vehicleTypeId: integer('vehicle_type_id')
+      .notNull()
+      .references(() => vehicleTypes.id), // Foreign key to Vehicle Types table
+    type: varchar('type', { length: 50 }).notNull(), // Type of shipping policy (e.g., FTL, LTL, Pending orders)
+    parameters: jsonb('parameters'), // JSONB field for policy-specific parameters
+    priority: varchar('priority', { length: 50 }).notNull(), // Priority for shipping (e.g., FIFO, ELT, Big first)
+    daysOfWeek: jsonb('days_of_week'), // JSONB field specifying days of the week when shipping is allowed
+    startTime: timestamp('start_time').notNull(), // Start time for shipping within a day
+    endTime: timestamp('end_time').notNull(), // End time for shipping within a day
+    timePeriodId: integer('time_period_id')
+      .notNull()
+      .references(() => periods.id), // Foreign key to Periods table
+    inclusionType: varchar('inclusion_type', { length: 50 }).notNull() // Inclusion status (Include or Exclude)
+  },
+  (table) => {
+    return {
+      idxShippingPoliciesSourceDestination: index(
+        'idx_shipping_policies_source_destination'
+      ).on(table.sourceId, table.destinationId, table.productId) // Index for querying by source, destination, and product
+    };
+  }
+);
+export const insertShippingSchema = createInsertSchema(shipping);
+
+export const sourcingPolicies = pgTable(
+  'sourcing_policies',
+  {
+    id: serial('id').primaryKey(), // Unique identifier for each sourcing policy record
+    destinationId: integer('destination_id')
+      .notNull()
+      .references(() => facilities.id), // Foreign key to Facilities table for the delivery destination
+    sources: jsonb('sources').notNull(), // JSONB field specifying the list of possible sources
+    productId: integer('product_id')
+      .notNull()
+      .references(() => products.id), // Foreign key to Products table
+    type: varchar('type', { length: 50 }).notNull(), // Type of sourcing policy (e.g., First, Cheapest, Closest, Fastest, Most Inventory, Uniform Split, Split by Ratio)
+    parameters: jsonb('parameters'), // JSONB field for policy-specific parameters
+    timePeriodId: integer('time_period_id')
+      .notNull()
+      .references(() => periods.id), // Foreign key to Periods table
+    inclusionType: varchar('inclusion_type', { length: 50 }).notNull() // Inclusion status (Include or Exclude)
+  },
+  (table) => {
+    return {
+      idxSourcingPoliciesDestinationProduct: index(
+        'idx_sourcing_policies_destination_product'
+      ).on(table.destinationId, table.productId) // Index for querying by destination and product
+    };
+  }
+);
+
+export const tariffs = pgTable(
+  'tariffs',
+  {
+    id: serial('id').primaryKey(), // Unique identifier for each tariff record
+    fromId: integer('from_id')
+      .notNull()
+      .references(() => facilities.id), // Foreign key to Facilities table for the source site
+    toId: integer('to_id')
+      .notNull()
+      .references(() => facilities.id), // Foreign key to Facilities table for the destination site
+    productId: integer('product_id')
+      .notNull()
+      .references(() => products.id), // Foreign key to Products table
+    tariffType: varchar('tariff_type', { length: 50 }).notNull(), // Type of tariff (Mixed, Compound, etc.)
+    adValorem: decimal('ad_valorem', { precision: 5, scale: 4 }).notNull(), // Ad Valorem tax rate (as a percentage of product value)
+    fixed: decimal('fixed', { precision: 15, scale: 2 }).notNull(), // Fixed tax cost per product unit
+    productUnit: varchar('product_unit', { length: 50 }).notNull(), // Product unit for fixed tax (e.g., pieces, kg, m3)
+    currency: varchar('currency', { length: 10 }).notNull(), // Currency type for the tariff (e.g., USD, EUR)
+    timePeriodId: integer('time_period_id')
+      .notNull()
+      .references(() => periods.id), // Foreign key to Periods table
+    inclusionType: varchar('inclusion_type', { length: 50 }).notNull() // Inclusion status (Include or Exclude)
+  },
+  (table) => {
+    return {
+      idxTariffsFromToProduct: index('idx_tariffs_from_to_product').on(
+        table.fromId,
+        table.toId,
+        table.productId
+      ) // Index for querying by source, destination, and product
+    };
+  }
+);
+
+export const timeWindows = pgTable(
+  'time_windows',
+  {
+    id: serial('id').primaryKey(), // Unique identifier for each time window record
+    facilityId: integer('facility_id')
+      .notNull()
+      .references(() => facilities.id), // Foreign key to Facilities table
+    operation: varchar('operation', { length: 50 }).notNull(), // Type of operation (Processing, Generating Orders, Production, Receiving & Unloading)
+    daysOfWeek: jsonb('days_of_week').notNull(), // JSONB field specifying days of the week for the time window
+    startTime: timestamp('start_time').notNull(), // Start of the operating hours
+    endTime: timestamp('end_time').notNull(), // End of the operating hours
+    timePeriodId: integer('time_period_id')
+      .notNull()
+      .references(() => periods.id) // Foreign key to Periods table
+  },
+  (table) => {
+    return {
+      idxTimeWindowsFacilityOperation: index(
+        'idx_time_windows_facility_operation'
+      ).on(table.facilityId, table.operation) // Index for querying by facility and operation
+    };
+  }
+);
+
+export const vehicleSelectionMode = pgTable(
+  'vehicle_selection_mode',
+  {
+    id: serial('id').primaryKey(), // Unique identifier for each vehicle selection mode record
+    fromId: integer('from_id')
+      .notNull()
+      .references(() => facilities.id), // Foreign key to Facilities table for the source site
+    toId: integer('to_id')
+      .notNull()
+      .references(() => facilities.id), // Foreign key to Facilities table for the destination site
+    type: varchar('type', { length: 50 }).notNull(), // Vehicle selection mode (Cheapest, Fastest, Closest fit, By priority)
+    parameters: jsonb('parameters') // JSONB field for selection mode parameters
+  },
+  (table) => {
+    return {
+      idxVehicleSelectionModeFromTo: index(
+        'idx_vehicle_selection_mode_from_to'
+      ).on(table.fromId, table.toId) // Index for querying by source and destination
+    };
+  }
+);
 
 export const accounts = pgTable('accounts', {
   id: text('id').primaryKey(),
@@ -1321,36 +1815,3 @@ export const subscriptions = pgTable('subscriptions', {
   subscriptionId: text('subscription_id').notNull().unique(),
   status: text('status').notNull()
 });
-
-export const saleBatches = pgTable(
-  'sale_batches',
-  {
-    id: serial('id').primaryKey(),
-    sourceId: integer('source_id')
-      .notNull()
-      .references(() => facilities.id),
-    productId: integer('product_id')
-      .notNull()
-      .references(() => products.id),
-    type: varchar('type', { length: 20 }).notNull(),
-    batchSize: decimal('batch_size', { precision: 15, scale: 2 }).notNull(),
-    stepSize: decimal('step_size', { precision: 15, scale: 2 }),
-    pricePerUnit: decimal('price_per_unit', {
-      precision: 15,
-      scale: 2
-    }).notNull(),
-    currency: varchar('currency', { length: 10 }).notNull(),
-    timePeriodId: integer('time_period_id').references(() => periods.id)
-  },
-  (table) => ({
-    typeCheck: sql`CHECK (${table.type} IN ('Exact', 'Starts From'))`,
-    idxSaleBatchesSource: index('idx_sale_batches_source').on(table.sourceId),
-    idxSaleBatchesProduct: index('idx_sale_batches_product').on(
-      table.productId
-    ),
-    idxSaleBatchesTimePeriod: index('idx_sale_batches_time_period').on(
-      table.timePeriodId
-    )
-  })
-);
-

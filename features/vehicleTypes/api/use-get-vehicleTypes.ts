@@ -2,7 +2,7 @@ import { useQuery } from '@tanstack/react-query';
 
 import { client } from '@/lib/hono';
 
-export const useGetvehicleTypes = () => {
+export const useGetVehicleTypes = () => {
   const query = useQuery({
     queryKey: ['vehicleTypes'],
     queryFn: async () => {

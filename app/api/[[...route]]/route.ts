@@ -27,6 +27,18 @@ import indicatorConstraints from './indicatorconstraints';
 import objectiveMembers from './objectivemembers';
 import unitconversions from './unitconversions'
 import processingcosts from './processingcost'
+import productStorages from './productstorages'
+import sitestatechanges from './sitestatechanges'
+import production_no from './production_no'
+import periodgroups from './periodgroups'
+import productgroups from './productgroups'
+import milkRuns from './milkruns'
+import fleets from './fleets'
+import processingTime from './processingtime'
+import loadingUnloadingGates from './loadingunloadinggates'
+import orderingRules from './orderingrules'
+import shipping from './shipping'
+
 export const runtime = 'nodejs';
 
 const app = new Hono().basePath('/api');
@@ -59,7 +71,17 @@ const routes = app
   .route('/linearranges', linearRanges)
   .route('/unitconversions',unitconversions)
   .route('/processingcosts', processingcosts)
-
+  .route('/productstorages', productStorages)
+  .route('/sitestatechanges', sitestatechanges)
+  .route('/production_no', production_no)
+  .route('/periodgroups', periodgroups)
+  .route('/productgroups', productgroups)
+  .route('/milkruns', milkRuns)
+  .route('/fleets', fleets)
+  .route('/processingtime', processingTime)
+  .route('/loadingunloadinggates', loadingUnloadingGates)
+  .route('/orderingrules', orderingRules)
+  .route('/shipping', shipping)
 export const GET = handle(app);
 export const POST = handle(app);
 export const PATCH = handle(app);

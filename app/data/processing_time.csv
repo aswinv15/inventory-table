@@ -1,0 +1,10 @@
+facility_id,product_id,type,time_unit,time,timeunit_id
+33,26,periodic processing cost,7,8,1
+38,26,periodic processing cost,14,16,2
+34,26,periodic processing cost,21,24,3
+33,26,periodic processing cost,7,8,4
+38,26,periodic processing cost,14,16,5
+34,26,periodic processing cost,21,24,6
+33,26,periodic processing cost,7,8,7
+38,26,periodic processing cost,14,16,8
+34,26,periodic processing cost,21,24,9

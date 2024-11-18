@@ -25,14 +25,6 @@ const patchprocessingCostsSchema = z.object({
   timePeriodId: z.number().int().positive().optional(),
   
 });
-async function fetchEntityMap(table: any, names: string[]) {
-  const entities = await db
-    .select({ id: table.id, name: table.name })
-    .from(table)
-    .where(sql`${table.name} IN ${names}`);
-
-  return new Map(entities.map((entity) => [entity.name, entity.id]));
-}
 
 const app = new Hono()
   .get(
@@ -243,11 +235,6 @@ const app = new Hono()
         const updateValues = Object.fromEntries(
           Object.entries(values).filter(([_, v]) => v !== undefined)
         );
-
-        // Handle cost separately to avoid type issues
-        if (updateValues.cost !== undefined) {
-          updateValues.cost = updateValues.cost.toString();
-        }
 
         const [data] = await db
           .update(processingCosts)

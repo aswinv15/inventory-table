@@ -62,6 +62,27 @@ CREATE TABLE IF NOT EXISTS "Chat" (
 	"userId" varchar(64) NOT NULL
 );
 --> statement-breakpoint
+CREATE TABLE IF NOT EXISTS "co2_emissions" (
+	"id" serial PRIMARY KEY NOT NULL,
+	"facility_id" integer NOT NULL,
+	"co2_emission_source" varchar(50) NOT NULL,
+	"co2_produced" numeric(15, 2) NOT NULL,
+	"time_unit" varchar(50),
+	"product_unit" varchar(50),
+	"time_period_id" integer NOT NULL
+);
+--> statement-breakpoint
+CREATE TABLE IF NOT EXISTS "co2_processing" (
+	"id" serial PRIMARY KEY NOT NULL,
+	"facility_id" integer NOT NULL,
+	"product_id" integer NOT NULL,
+	"processing_type" varchar(50) NOT NULL,
+	"units" varchar(50) NOT NULL,
+	"co2_produced" numeric(15, 2) NOT NULL,
+	"time_period_id" integer NOT NULL,
+	"co2_calculation_formula" text
+);
+--> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "cog_new_locations" (
 	"id" serial PRIMARY KEY NOT NULL,
 	"code" varchar(20),
@@ -135,6 +156,15 @@ CREATE TABLE IF NOT EXISTS "demand_coverage_by_distances" (
 	"updated_at" timestamp DEFAULT now()
 );
 --> statement-breakpoint
+CREATE TABLE IF NOT EXISTS "demand_forecast" (
+	"id" serial PRIMARY KEY NOT NULL,
+	"facility_id" integer NOT NULL,
+	"product_id" integer NOT NULL,
+	"type" varchar(50) NOT NULL,
+	"parameters" jsonb NOT NULL,
+	"time_period_id" integer NOT NULL
+);
+--> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "demand_fulfillment" (
 	"id" serial PRIMARY KEY NOT NULL,
 	"iteration" integer NOT NULL,
@@ -163,6 +193,17 @@ CREATE TABLE IF NOT EXISTS "distance_coverage_by_demands" (
 	"updated_at" timestamp DEFAULT now()
 );
 --> statement-breakpoint
+CREATE TABLE IF NOT EXISTS "events" (
+	"id" serial PRIMARY KEY NOT NULL,
+	"name" varchar(100) NOT NULL,
+	"event_type" varchar(50) NOT NULL,
+	"parameters" jsonb,
+	"occurrence_type" varchar(50) NOT NULL,
+	"occurrence_time" varchar(50) NOT NULL,
+	"trigger_event_name" varchar(100),
+	"probability" numeric(3, 2) NOT NULL
+);
+--> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "facilities" (
 	"id" serial PRIMARY KEY NOT NULL,
 	"name" varchar(255) NOT NULL,
@@ -188,6 +229,16 @@ CREATE TABLE IF NOT EXISTS "facility_expenses" (
 	"time_unit" varchar(50),
 	"product_unit" varchar(50),
 	"time_period_id" integer
+);
+--> statement-breakpoint
+CREATE TABLE IF NOT EXISTS "fleets" (
+	"id" serial PRIMARY KEY NOT NULL,
+	"facility_id" integer NOT NULL,
+	"vehicle_type_id" integer NOT NULL,
+	"quantity" integer NOT NULL,
+	"cost" numeric(15, 2) NOT NULL,
+	"currency" varchar(10) NOT NULL,
+	"time_unit" varchar(50)
 );
 --> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "group_customers" (
@@ -227,12 +278,42 @@ CREATE TABLE IF NOT EXISTS "indicator_constraints" (
 	"updated_at" timestamp DEFAULT CURRENT_TIMESTAMP
 );
 --> statement-breakpoint
+CREATE TABLE IF NOT EXISTS "inventory" (
+	"id" serial PRIMARY KEY NOT NULL,
+	"facility_id" integer NOT NULL,
+	"product_id" integer NOT NULL,
+	"policy_type" varchar(50) NOT NULL,
+	"policy_parameters" jsonb,
+	"initial_stock" numeric(15, 2) NOT NULL,
+	"periodic_check" boolean DEFAULT false NOT NULL,
+	"period" integer,
+	"first_periodic_check" varchar(50),
+	"policy_basis" varchar(50),
+	"stock_calculation_window" integer,
+	"time_unit" varchar(50) NOT NULL,
+	"min_split_ratio" numeric(3, 2),
+	"time_period_id" integer NOT NULL,
+	"inclusion_type" varchar(50) NOT NULL
+);
+--> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "linear_ranges" (
 	"id" serial PRIMARY KEY NOT NULL,
 	"name" varchar(255) NOT NULL,
 	"lower_bound" numeric(15, 2) NOT NULL,
 	"expression" text NOT NULL,
 	"upper_bound" numeric(15, 2) NOT NULL
+);
+--> statement-breakpoint
+CREATE TABLE IF NOT EXISTS "loading_unloading_gates" (
+	"id" serial PRIMARY KEY NOT NULL,
+	"name" varchar(100) NOT NULL,
+	"facility_id" integer NOT NULL,
+	"type" varchar(50) NOT NULL,
+	"vehicle_types" jsonb NOT NULL,
+	"number_of_gates" integer NOT NULL,
+	"units" varchar(50) NOT NULL,
+	"processing_time" numeric(15, 2) NOT NULL,
+	"time_unit" varchar(50) NOT NULL
 );
 --> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "location_group_locations" (
@@ -264,6 +345,13 @@ CREATE TABLE IF NOT EXISTS "locations" (
 	"updated_at" timestamp DEFAULT now()
 );
 --> statement-breakpoint
+CREATE TABLE IF NOT EXISTS "milk_runs" (
+	"id" serial PRIMARY KEY NOT NULL,
+	"source_id" integer NOT NULL,
+	"destinations" varchar NOT NULL,
+	"vehicle_type_id" integer NOT NULL
+);
+--> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "objective_members" (
 	"id" serial PRIMARY KEY NOT NULL,
 	"name" varchar(255) NOT NULL,
@@ -272,6 +360,14 @@ CREATE TABLE IF NOT EXISTS "objective_members" (
 	"add_to_objective" boolean DEFAULT true,
 	"inclusion_type" varchar(10),
 	"custom_constraint_id" integer
+);
+--> statement-breakpoint
+CREATE TABLE IF NOT EXISTS "ordering_rules" (
+	"id" serial PRIMARY KEY NOT NULL,
+	"destination_id" integer NOT NULL,
+	"product_id" integer NOT NULL,
+	"rule" varchar(50) NOT NULL,
+	"limit_units" integer NOT NULL
 );
 --> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "paths" (
@@ -295,6 +391,17 @@ CREATE TABLE IF NOT EXISTS "paths" (
 	"time_period" varchar(50),
 	"inclusion_type" varchar(10) DEFAULT 'Include',
 	CONSTRAINT "paths_name_unique" UNIQUE("name")
+);
+--> statement-breakpoint
+CREATE TABLE IF NOT EXISTS "payment_terms" (
+	"id" serial PRIMARY KEY NOT NULL,
+	"seller_id" integer NOT NULL,
+	"buyer_id" integer NOT NULL,
+	"product_id" integer NOT NULL,
+	"deferment_period" numeric(10, 2) NOT NULL,
+	"time_unit" varchar(50) NOT NULL,
+	"down_payment_ratio" numeric(5, 2) NOT NULL,
+	"time_period_id" integer NOT NULL
 );
 --> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "period_group_periods" (
@@ -326,6 +433,16 @@ CREATE TABLE IF NOT EXISTS "processing_costs" (
 	"cost" numeric(15, 2) NOT NULL,
 	"currency" varchar(10) NOT NULL,
 	"time_period_id" integer
+);
+--> statement-breakpoint
+CREATE TABLE IF NOT EXISTS "processing_time" (
+	"id" serial PRIMARY KEY NOT NULL,
+	"facility_id" integer NOT NULL,
+	"product_id" integer NOT NULL,
+	"type" varchar(50) NOT NULL,
+	"units" varchar(50) NOT NULL,
+	"time" numeric(10, 2) NOT NULL,
+	"time_unit" varchar(50) NOT NULL
 );
 --> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "product_flows" (
@@ -452,6 +569,22 @@ CREATE TABLE IF NOT EXISTS "sale_batches" (
 	"time_period_id" integer
 );
 --> statement-breakpoint
+CREATE TABLE IF NOT EXISTS "shipping_policies" (
+	"id" serial PRIMARY KEY NOT NULL,
+	"source_id" integer NOT NULL,
+	"destination_id" integer NOT NULL,
+	"product_id" integer NOT NULL,
+	"vehicle_type_id" integer NOT NULL,
+	"type" varchar(50) NOT NULL,
+	"parameters" jsonb,
+	"priority" varchar(50) NOT NULL,
+	"days_of_week" jsonb,
+	"start_time" timestamp NOT NULL,
+	"end_time" timestamp NOT NULL,
+	"time_period_id" integer NOT NULL,
+	"inclusion_type" varchar(50) NOT NULL
+);
+--> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "site_state_changes" (
 	"id" serial PRIMARY KEY NOT NULL,
 	"site_id" integer NOT NULL,
@@ -470,6 +603,17 @@ CREATE TABLE IF NOT EXISTS "sourcing" (
 	"inclusion_type" varchar(50),
 	"created_at" timestamp DEFAULT now(),
 	"updated_at" timestamp DEFAULT now()
+);
+--> statement-breakpoint
+CREATE TABLE IF NOT EXISTS "sourcing_policies" (
+	"id" serial PRIMARY KEY NOT NULL,
+	"destination_id" integer NOT NULL,
+	"sources" jsonb NOT NULL,
+	"product_id" integer NOT NULL,
+	"type" varchar(50) NOT NULL,
+	"parameters" jsonb,
+	"time_period_id" integer NOT NULL,
+	"inclusion_type" varchar(50) NOT NULL
 );
 --> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "subscriptions" (
@@ -500,6 +644,30 @@ CREATE TABLE IF NOT EXISTS "suppliers" (
 	"updated_at" timestamp DEFAULT now()
 );
 --> statement-breakpoint
+CREATE TABLE IF NOT EXISTS "tariffs" (
+	"id" serial PRIMARY KEY NOT NULL,
+	"from_id" integer NOT NULL,
+	"to_id" integer NOT NULL,
+	"product_id" integer NOT NULL,
+	"tariff_type" varchar(50) NOT NULL,
+	"ad_valorem" numeric(5, 4) NOT NULL,
+	"fixed" numeric(15, 2) NOT NULL,
+	"product_unit" varchar(50) NOT NULL,
+	"currency" varchar(10) NOT NULL,
+	"time_period_id" integer NOT NULL,
+	"inclusion_type" varchar(50) NOT NULL
+);
+--> statement-breakpoint
+CREATE TABLE IF NOT EXISTS "time_windows" (
+	"id" serial PRIMARY KEY NOT NULL,
+	"facility_id" integer NOT NULL,
+	"operation" varchar(50) NOT NULL,
+	"days_of_week" jsonb NOT NULL,
+	"start_time" timestamp NOT NULL,
+	"end_time" timestamp NOT NULL,
+	"time_period_id" integer NOT NULL
+);
+--> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "transactions" (
 	"id" text PRIMARY KEY NOT NULL,
 	"amount" integer NOT NULL,
@@ -527,6 +695,14 @@ CREATE TABLE IF NOT EXISTS "units" (
 	"created_at" timestamp DEFAULT now(),
 	"updated_at" timestamp DEFAULT now(),
 	CONSTRAINT "units_name_unique" UNIQUE("name")
+);
+--> statement-breakpoint
+CREATE TABLE IF NOT EXISTS "vehicle_selection_mode" (
+	"id" serial PRIMARY KEY NOT NULL,
+	"from_id" integer NOT NULL,
+	"to_id" integer NOT NULL,
+	"type" varchar(50) NOT NULL,
+	"parameters" jsonb
 );
 --> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "vehicle_types" (
@@ -581,6 +757,36 @@ EXCEPTION
 END $$;
 --> statement-breakpoint
 DO $$ BEGIN
+ ALTER TABLE "co2_emissions" ADD CONSTRAINT "co2_emissions_facility_id_facilities_id_fk" FOREIGN KEY ("facility_id") REFERENCES "public"."facilities"("id") ON DELETE no action ON UPDATE no action;
+EXCEPTION
+ WHEN duplicate_object THEN null;
+END $$;
+--> statement-breakpoint
+DO $$ BEGIN
+ ALTER TABLE "co2_emissions" ADD CONSTRAINT "co2_emissions_time_period_id_periods_id_fk" FOREIGN KEY ("time_period_id") REFERENCES "public"."periods"("id") ON DELETE no action ON UPDATE no action;
+EXCEPTION
+ WHEN duplicate_object THEN null;
+END $$;
+--> statement-breakpoint
+DO $$ BEGIN
+ ALTER TABLE "co2_processing" ADD CONSTRAINT "co2_processing_facility_id_facilities_id_fk" FOREIGN KEY ("facility_id") REFERENCES "public"."facilities"("id") ON DELETE no action ON UPDATE no action;
+EXCEPTION
+ WHEN duplicate_object THEN null;
+END $$;
+--> statement-breakpoint
+DO $$ BEGIN
+ ALTER TABLE "co2_processing" ADD CONSTRAINT "co2_processing_product_id_products_id_fk" FOREIGN KEY ("product_id") REFERENCES "public"."products"("id") ON DELETE no action ON UPDATE no action;
+EXCEPTION
+ WHEN duplicate_object THEN null;
+END $$;
+--> statement-breakpoint
+DO $$ BEGIN
+ ALTER TABLE "co2_processing" ADD CONSTRAINT "co2_processing_time_period_id_periods_id_fk" FOREIGN KEY ("time_period_id") REFERENCES "public"."periods"("id") ON DELETE no action ON UPDATE no action;
+EXCEPTION
+ WHEN duplicate_object THEN null;
+END $$;
+--> statement-breakpoint
+DO $$ BEGIN
  ALTER TABLE "customers" ADD CONSTRAINT "customers_location_id_locations_id_fk" FOREIGN KEY ("location_id") REFERENCES "public"."locations"("id") ON DELETE no action ON UPDATE no action;
 EXCEPTION
  WHEN duplicate_object THEN null;
@@ -606,6 +812,24 @@ END $$;
 --> statement-breakpoint
 DO $$ BEGIN
  ALTER TABLE "demand_coverage_by_distances" ADD CONSTRAINT "demand_coverage_by_distances_site_id_facilities_id_fk" FOREIGN KEY ("site_id") REFERENCES "public"."facilities"("id") ON DELETE no action ON UPDATE no action;
+EXCEPTION
+ WHEN duplicate_object THEN null;
+END $$;
+--> statement-breakpoint
+DO $$ BEGIN
+ ALTER TABLE "demand_forecast" ADD CONSTRAINT "demand_forecast_facility_id_facilities_id_fk" FOREIGN KEY ("facility_id") REFERENCES "public"."facilities"("id") ON DELETE no action ON UPDATE no action;
+EXCEPTION
+ WHEN duplicate_object THEN null;
+END $$;
+--> statement-breakpoint
+DO $$ BEGIN
+ ALTER TABLE "demand_forecast" ADD CONSTRAINT "demand_forecast_product_id_products_id_fk" FOREIGN KEY ("product_id") REFERENCES "public"."products"("id") ON DELETE no action ON UPDATE no action;
+EXCEPTION
+ WHEN duplicate_object THEN null;
+END $$;
+--> statement-breakpoint
+DO $$ BEGIN
+ ALTER TABLE "demand_forecast" ADD CONSTRAINT "demand_forecast_time_period_id_periods_id_fk" FOREIGN KEY ("time_period_id") REFERENCES "public"."periods"("id") ON DELETE no action ON UPDATE no action;
 EXCEPTION
  WHEN duplicate_object THEN null;
 END $$;
@@ -642,6 +866,18 @@ END $$;
 --> statement-breakpoint
 DO $$ BEGIN
  ALTER TABLE "facility_expenses" ADD CONSTRAINT "facility_expenses_time_period_id_periods_id_fk" FOREIGN KEY ("time_period_id") REFERENCES "public"."periods"("id") ON DELETE no action ON UPDATE no action;
+EXCEPTION
+ WHEN duplicate_object THEN null;
+END $$;
+--> statement-breakpoint
+DO $$ BEGIN
+ ALTER TABLE "fleets" ADD CONSTRAINT "fleets_facility_id_facilities_id_fk" FOREIGN KEY ("facility_id") REFERENCES "public"."facilities"("id") ON DELETE no action ON UPDATE no action;
+EXCEPTION
+ WHEN duplicate_object THEN null;
+END $$;
+--> statement-breakpoint
+DO $$ BEGIN
+ ALTER TABLE "fleets" ADD CONSTRAINT "fleets_vehicle_type_id_vehicle_types_id_fk" FOREIGN KEY ("vehicle_type_id") REFERENCES "public"."vehicle_types"("id") ON DELETE no action ON UPDATE no action;
 EXCEPTION
  WHEN duplicate_object THEN null;
 END $$;
@@ -707,6 +943,30 @@ EXCEPTION
 END $$;
 --> statement-breakpoint
 DO $$ BEGIN
+ ALTER TABLE "inventory" ADD CONSTRAINT "inventory_facility_id_facilities_id_fk" FOREIGN KEY ("facility_id") REFERENCES "public"."facilities"("id") ON DELETE no action ON UPDATE no action;
+EXCEPTION
+ WHEN duplicate_object THEN null;
+END $$;
+--> statement-breakpoint
+DO $$ BEGIN
+ ALTER TABLE "inventory" ADD CONSTRAINT "inventory_product_id_products_id_fk" FOREIGN KEY ("product_id") REFERENCES "public"."products"("id") ON DELETE no action ON UPDATE no action;
+EXCEPTION
+ WHEN duplicate_object THEN null;
+END $$;
+--> statement-breakpoint
+DO $$ BEGIN
+ ALTER TABLE "inventory" ADD CONSTRAINT "inventory_time_period_id_periods_id_fk" FOREIGN KEY ("time_period_id") REFERENCES "public"."periods"("id") ON DELETE no action ON UPDATE no action;
+EXCEPTION
+ WHEN duplicate_object THEN null;
+END $$;
+--> statement-breakpoint
+DO $$ BEGIN
+ ALTER TABLE "loading_unloading_gates" ADD CONSTRAINT "loading_unloading_gates_facility_id_facilities_id_fk" FOREIGN KEY ("facility_id") REFERENCES "public"."facilities"("id") ON DELETE no action ON UPDATE no action;
+EXCEPTION
+ WHEN duplicate_object THEN null;
+END $$;
+--> statement-breakpoint
+DO $$ BEGIN
  ALTER TABLE "location_group_locations" ADD CONSTRAINT "location_group_locations_location_group_id_location_groups_id_fk" FOREIGN KEY ("location_group_id") REFERENCES "public"."location_groups"("id") ON DELETE cascade ON UPDATE no action;
 EXCEPTION
  WHEN duplicate_object THEN null;
@@ -719,7 +979,55 @@ EXCEPTION
 END $$;
 --> statement-breakpoint
 DO $$ BEGIN
+ ALTER TABLE "milk_runs" ADD CONSTRAINT "milk_runs_source_id_facilities_id_fk" FOREIGN KEY ("source_id") REFERENCES "public"."facilities"("id") ON DELETE no action ON UPDATE no action;
+EXCEPTION
+ WHEN duplicate_object THEN null;
+END $$;
+--> statement-breakpoint
+DO $$ BEGIN
+ ALTER TABLE "milk_runs" ADD CONSTRAINT "milk_runs_vehicle_type_id_vehicle_types_id_fk" FOREIGN KEY ("vehicle_type_id") REFERENCES "public"."vehicle_types"("id") ON DELETE no action ON UPDATE no action;
+EXCEPTION
+ WHEN duplicate_object THEN null;
+END $$;
+--> statement-breakpoint
+DO $$ BEGIN
+ ALTER TABLE "ordering_rules" ADD CONSTRAINT "ordering_rules_destination_id_facilities_id_fk" FOREIGN KEY ("destination_id") REFERENCES "public"."facilities"("id") ON DELETE no action ON UPDATE no action;
+EXCEPTION
+ WHEN duplicate_object THEN null;
+END $$;
+--> statement-breakpoint
+DO $$ BEGIN
+ ALTER TABLE "ordering_rules" ADD CONSTRAINT "ordering_rules_product_id_products_id_fk" FOREIGN KEY ("product_id") REFERENCES "public"."products"("id") ON DELETE no action ON UPDATE no action;
+EXCEPTION
+ WHEN duplicate_object THEN null;
+END $$;
+--> statement-breakpoint
+DO $$ BEGIN
  ALTER TABLE "paths" ADD CONSTRAINT "paths_vehicle_type_id_vehicle_types_id_fk" FOREIGN KEY ("vehicle_type_id") REFERENCES "public"."vehicle_types"("id") ON DELETE no action ON UPDATE no action;
+EXCEPTION
+ WHEN duplicate_object THEN null;
+END $$;
+--> statement-breakpoint
+DO $$ BEGIN
+ ALTER TABLE "payment_terms" ADD CONSTRAINT "payment_terms_seller_id_facilities_id_fk" FOREIGN KEY ("seller_id") REFERENCES "public"."facilities"("id") ON DELETE no action ON UPDATE no action;
+EXCEPTION
+ WHEN duplicate_object THEN null;
+END $$;
+--> statement-breakpoint
+DO $$ BEGIN
+ ALTER TABLE "payment_terms" ADD CONSTRAINT "payment_terms_buyer_id_facilities_id_fk" FOREIGN KEY ("buyer_id") REFERENCES "public"."facilities"("id") ON DELETE no action ON UPDATE no action;
+EXCEPTION
+ WHEN duplicate_object THEN null;
+END $$;
+--> statement-breakpoint
+DO $$ BEGIN
+ ALTER TABLE "payment_terms" ADD CONSTRAINT "payment_terms_product_id_products_id_fk" FOREIGN KEY ("product_id") REFERENCES "public"."products"("id") ON DELETE no action ON UPDATE no action;
+EXCEPTION
+ WHEN duplicate_object THEN null;
+END $$;
+--> statement-breakpoint
+DO $$ BEGIN
+ ALTER TABLE "payment_terms" ADD CONSTRAINT "payment_terms_time_period_id_periods_id_fk" FOREIGN KEY ("time_period_id") REFERENCES "public"."periods"("id") ON DELETE no action ON UPDATE no action;
 EXCEPTION
  WHEN duplicate_object THEN null;
 END $$;
@@ -750,6 +1058,18 @@ END $$;
 --> statement-breakpoint
 DO $$ BEGIN
  ALTER TABLE "processing_costs" ADD CONSTRAINT "processing_costs_time_period_id_periods_id_fk" FOREIGN KEY ("time_period_id") REFERENCES "public"."periods"("id") ON DELETE no action ON UPDATE no action;
+EXCEPTION
+ WHEN duplicate_object THEN null;
+END $$;
+--> statement-breakpoint
+DO $$ BEGIN
+ ALTER TABLE "processing_time" ADD CONSTRAINT "processing_time_facility_id_facilities_id_fk" FOREIGN KEY ("facility_id") REFERENCES "public"."facilities"("id") ON DELETE no action ON UPDATE no action;
+EXCEPTION
+ WHEN duplicate_object THEN null;
+END $$;
+--> statement-breakpoint
+DO $$ BEGIN
+ ALTER TABLE "processing_time" ADD CONSTRAINT "processing_time_product_id_products_id_fk" FOREIGN KEY ("product_id") REFERENCES "public"."products"("id") ON DELETE no action ON UPDATE no action;
 EXCEPTION
  WHEN duplicate_object THEN null;
 END $$;
@@ -875,6 +1195,36 @@ EXCEPTION
 END $$;
 --> statement-breakpoint
 DO $$ BEGIN
+ ALTER TABLE "shipping_policies" ADD CONSTRAINT "shipping_policies_source_id_facilities_id_fk" FOREIGN KEY ("source_id") REFERENCES "public"."facilities"("id") ON DELETE no action ON UPDATE no action;
+EXCEPTION
+ WHEN duplicate_object THEN null;
+END $$;
+--> statement-breakpoint
+DO $$ BEGIN
+ ALTER TABLE "shipping_policies" ADD CONSTRAINT "shipping_policies_destination_id_facilities_id_fk" FOREIGN KEY ("destination_id") REFERENCES "public"."facilities"("id") ON DELETE no action ON UPDATE no action;
+EXCEPTION
+ WHEN duplicate_object THEN null;
+END $$;
+--> statement-breakpoint
+DO $$ BEGIN
+ ALTER TABLE "shipping_policies" ADD CONSTRAINT "shipping_policies_product_id_products_id_fk" FOREIGN KEY ("product_id") REFERENCES "public"."products"("id") ON DELETE no action ON UPDATE no action;
+EXCEPTION
+ WHEN duplicate_object THEN null;
+END $$;
+--> statement-breakpoint
+DO $$ BEGIN
+ ALTER TABLE "shipping_policies" ADD CONSTRAINT "shipping_policies_vehicle_type_id_vehicle_types_id_fk" FOREIGN KEY ("vehicle_type_id") REFERENCES "public"."vehicle_types"("id") ON DELETE no action ON UPDATE no action;
+EXCEPTION
+ WHEN duplicate_object THEN null;
+END $$;
+--> statement-breakpoint
+DO $$ BEGIN
+ ALTER TABLE "shipping_policies" ADD CONSTRAINT "shipping_policies_time_period_id_periods_id_fk" FOREIGN KEY ("time_period_id") REFERENCES "public"."periods"("id") ON DELETE no action ON UPDATE no action;
+EXCEPTION
+ WHEN duplicate_object THEN null;
+END $$;
+--> statement-breakpoint
+DO $$ BEGIN
  ALTER TABLE "site_state_changes" ADD CONSTRAINT "site_state_changes_site_id_facilities_id_fk" FOREIGN KEY ("site_id") REFERENCES "public"."facilities"("id") ON DELETE no action ON UPDATE no action;
 EXCEPTION
  WHEN duplicate_object THEN null;
@@ -899,6 +1249,24 @@ EXCEPTION
 END $$;
 --> statement-breakpoint
 DO $$ BEGIN
+ ALTER TABLE "sourcing_policies" ADD CONSTRAINT "sourcing_policies_destination_id_facilities_id_fk" FOREIGN KEY ("destination_id") REFERENCES "public"."facilities"("id") ON DELETE no action ON UPDATE no action;
+EXCEPTION
+ WHEN duplicate_object THEN null;
+END $$;
+--> statement-breakpoint
+DO $$ BEGIN
+ ALTER TABLE "sourcing_policies" ADD CONSTRAINT "sourcing_policies_product_id_products_id_fk" FOREIGN KEY ("product_id") REFERENCES "public"."products"("id") ON DELETE no action ON UPDATE no action;
+EXCEPTION
+ WHEN duplicate_object THEN null;
+END $$;
+--> statement-breakpoint
+DO $$ BEGIN
+ ALTER TABLE "sourcing_policies" ADD CONSTRAINT "sourcing_policies_time_period_id_periods_id_fk" FOREIGN KEY ("time_period_id") REFERENCES "public"."periods"("id") ON DELETE no action ON UPDATE no action;
+EXCEPTION
+ WHEN duplicate_object THEN null;
+END $$;
+--> statement-breakpoint
+DO $$ BEGIN
  ALTER TABLE "supplier_products" ADD CONSTRAINT "supplier_products_supplier_id_suppliers_id_fk" FOREIGN KEY ("supplier_id") REFERENCES "public"."suppliers"("id") ON DELETE cascade ON UPDATE no action;
 EXCEPTION
  WHEN duplicate_object THEN null;
@@ -917,6 +1285,42 @@ EXCEPTION
 END $$;
 --> statement-breakpoint
 DO $$ BEGIN
+ ALTER TABLE "tariffs" ADD CONSTRAINT "tariffs_from_id_facilities_id_fk" FOREIGN KEY ("from_id") REFERENCES "public"."facilities"("id") ON DELETE no action ON UPDATE no action;
+EXCEPTION
+ WHEN duplicate_object THEN null;
+END $$;
+--> statement-breakpoint
+DO $$ BEGIN
+ ALTER TABLE "tariffs" ADD CONSTRAINT "tariffs_to_id_facilities_id_fk" FOREIGN KEY ("to_id") REFERENCES "public"."facilities"("id") ON DELETE no action ON UPDATE no action;
+EXCEPTION
+ WHEN duplicate_object THEN null;
+END $$;
+--> statement-breakpoint
+DO $$ BEGIN
+ ALTER TABLE "tariffs" ADD CONSTRAINT "tariffs_product_id_products_id_fk" FOREIGN KEY ("product_id") REFERENCES "public"."products"("id") ON DELETE no action ON UPDATE no action;
+EXCEPTION
+ WHEN duplicate_object THEN null;
+END $$;
+--> statement-breakpoint
+DO $$ BEGIN
+ ALTER TABLE "tariffs" ADD CONSTRAINT "tariffs_time_period_id_periods_id_fk" FOREIGN KEY ("time_period_id") REFERENCES "public"."periods"("id") ON DELETE no action ON UPDATE no action;
+EXCEPTION
+ WHEN duplicate_object THEN null;
+END $$;
+--> statement-breakpoint
+DO $$ BEGIN
+ ALTER TABLE "time_windows" ADD CONSTRAINT "time_windows_facility_id_facilities_id_fk" FOREIGN KEY ("facility_id") REFERENCES "public"."facilities"("id") ON DELETE no action ON UPDATE no action;
+EXCEPTION
+ WHEN duplicate_object THEN null;
+END $$;
+--> statement-breakpoint
+DO $$ BEGIN
+ ALTER TABLE "time_windows" ADD CONSTRAINT "time_windows_time_period_id_periods_id_fk" FOREIGN KEY ("time_period_id") REFERENCES "public"."periods"("id") ON DELETE no action ON UPDATE no action;
+EXCEPTION
+ WHEN duplicate_object THEN null;
+END $$;
+--> statement-breakpoint
+DO $$ BEGIN
  ALTER TABLE "transactions" ADD CONSTRAINT "transactions_account_id_accounts_id_fk" FOREIGN KEY ("account_id") REFERENCES "public"."accounts"("id") ON DELETE cascade ON UPDATE no action;
 EXCEPTION
  WHEN duplicate_object THEN null;
@@ -930,6 +1334,18 @@ END $$;
 --> statement-breakpoint
 DO $$ BEGIN
  ALTER TABLE "unit_conversions" ADD CONSTRAINT "unit_conversions_product_id_products_id_fk" FOREIGN KEY ("product_id") REFERENCES "public"."products"("id") ON DELETE no action ON UPDATE no action;
+EXCEPTION
+ WHEN duplicate_object THEN null;
+END $$;
+--> statement-breakpoint
+DO $$ BEGIN
+ ALTER TABLE "vehicle_selection_mode" ADD CONSTRAINT "vehicle_selection_mode_from_id_facilities_id_fk" FOREIGN KEY ("from_id") REFERENCES "public"."facilities"("id") ON DELETE no action ON UPDATE no action;
+EXCEPTION
+ WHEN duplicate_object THEN null;
+END $$;
+--> statement-breakpoint
+DO $$ BEGIN
+ ALTER TABLE "vehicle_selection_mode" ADD CONSTRAINT "vehicle_selection_mode_to_id_facilities_id_fk" FOREIGN KEY ("to_id") REFERENCES "public"."facilities"("id") ON DELETE no action ON UPDATE no action;
 EXCEPTION
  WHEN duplicate_object THEN null;
 END $$;
@@ -954,6 +1370,8 @@ CREATE INDEX IF NOT EXISTS "idx_bom_byproducts_product_id" ON "bom_byproducts" U
 CREATE INDEX IF NOT EXISTS "idx_bom_components_bom_id" ON "bom_components" USING btree ("bom_id");--> statement-breakpoint
 CREATE INDEX IF NOT EXISTS "idx_bom_components_product_id" ON "bom_components" USING btree ("product_id");--> statement-breakpoint
 CREATE INDEX IF NOT EXISTS "idx_cash_accounts_facility_currency" ON "cash_accounts" USING btree ("facility_id","currency");--> statement-breakpoint
+CREATE INDEX IF NOT EXISTS "idx_co2_emissions_facility_source" ON "co2_emissions" USING btree ("facility_id","co2_emission_source");--> statement-breakpoint
+CREATE INDEX IF NOT EXISTS "idx_co2_processing_facility_product" ON "co2_processing" USING btree ("facility_id","product_id","processing_type");--> statement-breakpoint
 CREATE INDEX IF NOT EXISTS "idx_cog_location_name" ON "cog_new_locations" USING btree ("name");--> statement-breakpoint
 CREATE INDEX IF NOT EXISTS "idx_cog_location_city" ON "cog_new_locations" USING btree ("city");--> statement-breakpoint
 CREATE INDEX IF NOT EXISTS "idx_cog_location_country" ON "cog_new_locations" USING btree ("country");--> statement-breakpoint
@@ -964,16 +1382,23 @@ CREATE INDEX IF NOT EXISTS "idx_custom_constraints_comparison_type" ON "custom_c
 CREATE INDEX IF NOT EXISTS "idx_custom_constraints_constraint_type" ON "custom_constraints" USING btree ("constraint_type");--> statement-breakpoint
 CREATE INDEX IF NOT EXISTS "idx_demand_customer_product_inclusion" ON "demand" USING btree ("customer_id","product_id","inclusion_type");--> statement-breakpoint
 CREATE INDEX IF NOT EXISTS "idx_demand_coverage_by_distance_site" ON "demand_coverage_by_distances" USING btree ("site_id");--> statement-breakpoint
+CREATE INDEX IF NOT EXISTS "idx_demand_forecast_facility_product" ON "demand_forecast" USING btree ("facility_id","product_id","type");--> statement-breakpoint
 CREATE INDEX IF NOT EXISTS "idx_demand_fulfillment_customer" ON "demand_fulfillment" USING btree ("customer_id");--> statement-breakpoint
 CREATE INDEX IF NOT EXISTS "idx_demand_fulfillment_product" ON "demand_fulfillment" USING btree ("product_id");--> statement-breakpoint
 CREATE INDEX IF NOT EXISTS "idx_demand_fulfillment_iteration" ON "demand_fulfillment" USING btree ("iteration");--> statement-breakpoint
 CREATE INDEX IF NOT EXISTS "idx_demand_fulfillment_period" ON "demand_fulfillment" USING btree ("period");--> statement-breakpoint
 CREATE INDEX IF NOT EXISTS "idx_distance_coverage_by_demand_site" ON "distance_coverage_by_demands" USING btree ("site_id");--> statement-breakpoint
+CREATE INDEX IF NOT EXISTS "idx_events_name_type" ON "events" USING btree ("name","event_type");--> statement-breakpoint
+CREATE INDEX IF NOT EXISTS "idx_events_trigger" ON "events" USING btree ("trigger_event_name");--> statement-breakpoint
 CREATE INDEX IF NOT EXISTS "idx_facilities_name_inclusion_type" ON "facilities" USING btree ("name","inclusion_type");--> statement-breakpoint
 CREATE INDEX IF NOT EXISTS "idx_facility_expenses_facility_type" ON "facility_expenses" USING btree ("facility_id","expense_type");--> statement-breakpoint
+CREATE INDEX IF NOT EXISTS "idx_fleets_facility_vehicle" ON "fleets" USING btree ("facility_id","vehicle_type_id");--> statement-breakpoint
 CREATE INDEX IF NOT EXISTS "idx_if_condition_id" ON "indicator_constraints" USING btree ("if_condition_id");--> statement-breakpoint
 CREATE INDEX IF NOT EXISTS "idx_then_condition_id" ON "indicator_constraints" USING btree ("then_condition_id");--> statement-breakpoint
+CREATE INDEX IF NOT EXISTS "idx_inventory_facility_product" ON "inventory" USING btree ("facility_id","product_id");--> statement-breakpoint
+CREATE INDEX IF NOT EXISTS "idx_inventory_policy_type" ON "inventory" USING btree ("policy_type");--> statement-breakpoint
 CREATE INDEX IF NOT EXISTS "idx_linear_ranges_name" ON "linear_ranges" USING btree ("name");--> statement-breakpoint
+CREATE INDEX IF NOT EXISTS "idx_gates_facility_type" ON "loading_unloading_gates" USING btree ("facility_id","type");--> statement-breakpoint
 CREATE INDEX IF NOT EXISTS "idx_location_group_id" ON "location_group_locations" USING btree ("location_group_id");--> statement-breakpoint
 CREATE INDEX IF NOT EXISTS "idx_location_id" ON "location_group_locations" USING btree ("location_id");--> statement-breakpoint
 CREATE INDEX IF NOT EXISTS "idx_location_group_name" ON "location_groups" USING btree ("name");--> statement-breakpoint
@@ -982,11 +1407,14 @@ CREATE INDEX IF NOT EXISTS "idx_location_city" ON "locations" USING btree ("city
 CREATE INDEX IF NOT EXISTS "idx_location_country" ON "locations" USING btree ("country");--> statement-breakpoint
 CREATE INDEX IF NOT EXISTS "idx_location_lat_long" ON "locations" USING btree ("latitude","longitude");--> statement-breakpoint
 CREATE UNIQUE INDEX IF NOT EXISTS "idx_location_name_country" ON "locations" USING btree ("name","country") WHERE "locations"."autofill_coordinates" IS TRUE;--> statement-breakpoint
+CREATE INDEX IF NOT EXISTS "idx_milk_runs_source_vehicle" ON "milk_runs" USING btree ("source_id","vehicle_type_id");--> statement-breakpoint
 CREATE INDEX IF NOT EXISTS "idx_objective_members_name_inclusion" ON "objective_members" USING btree ("name","inclusion_type");--> statement-breakpoint
+CREATE INDEX IF NOT EXISTS "idx_ordering_rules_destination_product" ON "ordering_rules" USING btree ("destination_id","product_id");--> statement-breakpoint
 CREATE INDEX IF NOT EXISTS "idx_paths_from_location" ON "paths" USING btree ("from_location");--> statement-breakpoint
 CREATE INDEX IF NOT EXISTS "idx_paths_to_location" ON "paths" USING btree ("to_location");--> statement-breakpoint
 CREATE INDEX IF NOT EXISTS "idx_paths_cost_calculation_policy" ON "paths" USING btree ("cost_calculation_policy");--> statement-breakpoint
 CREATE INDEX IF NOT EXISTS "idx_paths_vehicle_type_id" ON "paths" USING btree ("vehicle_type_id");--> statement-breakpoint
+CREATE INDEX IF NOT EXISTS "idx_payment_terms_seller_buyer" ON "payment_terms" USING btree ("seller_id","buyer_id","product_id");--> statement-breakpoint
 CREATE INDEX IF NOT EXISTS "idx_period_groups_name" ON "period_groups" USING btree ("name");--> statement-breakpoint
 CREATE INDEX IF NOT EXISTS "periods_name_idx" ON "periods" USING btree ("name");--> statement-breakpoint
 CREATE INDEX IF NOT EXISTS "periods_start_end_idx" ON "periods" USING btree ("start","end");--> statement-breakpoint
@@ -995,6 +1423,7 @@ CREATE INDEX IF NOT EXISTS "idx_processing_costs_type" ON "processing_costs" USI
 CREATE INDEX IF NOT EXISTS "idx_processing_costs_currency" ON "processing_costs" USING btree ("currency");--> statement-breakpoint
 CREATE INDEX IF NOT EXISTS "idx_processing_costs_units" ON "processing_costs" USING btree ("units");--> statement-breakpoint
 CREATE INDEX IF NOT EXISTS "idx_processing_costs_time_period" ON "processing_costs" USING btree ("time_period_id");--> statement-breakpoint
+CREATE INDEX IF NOT EXISTS "idx_processing_time_facility_product" ON "processing_time" USING btree ("facility_id","product_id","type");--> statement-breakpoint
 CREATE INDEX IF NOT EXISTS "idx_product_flows_source_dest" ON "product_flows" USING btree ("source_id","destination_id");--> statement-breakpoint
 CREATE INDEX IF NOT EXISTS "idx_product_flows_vehicle_type" ON "product_flows" USING btree ("vehicle_type_id");--> statement-breakpoint
 CREATE INDEX IF NOT EXISTS "idx_product_flows_product" ON "product_flows" USING btree ("product_id");--> statement-breakpoint
@@ -1020,18 +1449,23 @@ CREATE INDEX IF NOT EXISTS "idx_production_time_period_no" ON "production_no" US
 CREATE INDEX IF NOT EXISTS "idx_sale_batches_source" ON "sale_batches" USING btree ("source_id");--> statement-breakpoint
 CREATE INDEX IF NOT EXISTS "idx_sale_batches_product" ON "sale_batches" USING btree ("product_id");--> statement-breakpoint
 CREATE INDEX IF NOT EXISTS "idx_sale_batches_time_period" ON "sale_batches" USING btree ("time_period_id");--> statement-breakpoint
+CREATE INDEX IF NOT EXISTS "idx_shipping_policies_source_destination" ON "shipping_policies" USING btree ("source_id","destination_id","product_id");--> statement-breakpoint
 CREATE INDEX IF NOT EXISTS "idx_site_state_changes_site" ON "site_state_changes" USING btree ("site_id");--> statement-breakpoint
 CREATE INDEX IF NOT EXISTS "idx_site_state_changes_time_period" ON "site_state_changes" USING btree ("time_period_id");--> statement-breakpoint
 CREATE INDEX IF NOT EXISTS "idx_sourcing_product_id" ON "sourcing" USING btree ("product_id");--> statement-breakpoint
 CREATE INDEX IF NOT EXISTS "idx_sourcing_time_period_id" ON "sourcing" USING btree ("time_period_id");--> statement-breakpoint
 CREATE INDEX IF NOT EXISTS "idx_sourcing_delivery_destination" ON "sourcing" USING btree ("delivery_destination");--> statement-breakpoint
+CREATE INDEX IF NOT EXISTS "idx_sourcing_policies_destination_product" ON "sourcing_policies" USING btree ("destination_id","product_id");--> statement-breakpoint
 CREATE INDEX IF NOT EXISTS "idx_supplier_products_supplier_id" ON "supplier_products" USING btree ("supplier_id");--> statement-breakpoint
 CREATE INDEX IF NOT EXISTS "idx_supplier_products_product_id" ON "supplier_products" USING btree ("product_id");--> statement-breakpoint
+CREATE INDEX IF NOT EXISTS "idx_tariffs_from_to_product" ON "tariffs" USING btree ("from_id","to_id","product_id");--> statement-breakpoint
+CREATE INDEX IF NOT EXISTS "idx_time_windows_facility_operation" ON "time_windows" USING btree ("facility_id","operation");--> statement-breakpoint
 CREATE UNIQUE INDEX IF NOT EXISTS "unique_conversion" ON "unit_conversions" USING btree ("product_id","unit_from","unit_to");--> statement-breakpoint
 CREATE INDEX IF NOT EXISTS "idx_unit_conversions_product_id" ON "unit_conversions" USING btree ("product_id");--> statement-breakpoint
 CREATE INDEX IF NOT EXISTS "idx_unit_conversions_unit_from" ON "unit_conversions" USING btree ("unit_from");--> statement-breakpoint
 CREATE INDEX IF NOT EXISTS "idx_unit_conversions_unit_to" ON "unit_conversions" USING btree ("unit_to");--> statement-breakpoint
 CREATE INDEX IF NOT EXISTS "idx_units_name" ON "units" USING btree ("name");--> statement-breakpoint
+CREATE INDEX IF NOT EXISTS "idx_vehicle_selection_mode_from_to" ON "vehicle_selection_mode" USING btree ("from_id","to_id");--> statement-breakpoint
 CREATE INDEX IF NOT EXISTS "idx_vehicle_types_name" ON "vehicle_types" USING btree ("name");--> statement-breakpoint
 CREATE INDEX IF NOT EXISTS "idx_vehicle_types_capacity_unit" ON "vehicle_types" USING btree ("capacity_unit");--> statement-breakpoint
 CREATE INDEX IF NOT EXISTS "idx_vehicle_types_speed_unit" ON "vehicle_types" USING btree ("speed_unit");
