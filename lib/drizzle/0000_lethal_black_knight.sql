@@ -579,8 +579,8 @@ CREATE TABLE IF NOT EXISTS "shipping_policies" (
 	"parameters" jsonb,
 	"priority" varchar(50) NOT NULL,
 	"days_of_week" jsonb,
-	"start_time" timestamp NOT NULL,
-	"end_time" timestamp NOT NULL,
+	"start_time" timestamp DEFAULT now(),
+	"end_time" timestamp DEFAULT now(),
 	"time_period_id" integer NOT NULL,
 	"inclusion_type" varchar(50) NOT NULL
 );
@@ -608,7 +608,7 @@ CREATE TABLE IF NOT EXISTS "sourcing" (
 CREATE TABLE IF NOT EXISTS "sourcing_policies" (
 	"id" serial PRIMARY KEY NOT NULL,
 	"destination_id" integer NOT NULL,
-	"sources" jsonb NOT NULL,
+	"sources" jsonb,
 	"product_id" integer NOT NULL,
 	"type" varchar(50) NOT NULL,
 	"parameters" jsonb,
@@ -663,8 +663,8 @@ CREATE TABLE IF NOT EXISTS "time_windows" (
 	"facility_id" integer NOT NULL,
 	"operation" varchar(50) NOT NULL,
 	"days_of_week" jsonb NOT NULL,
-	"start_time" timestamp NOT NULL,
-	"end_time" timestamp NOT NULL,
+	"start_time" timestamp DEFAULT now(),
+	"end_time" timestamp DEFAULT now(),
 	"time_period_id" integer NOT NULL
 );
 --> statement-breakpoint

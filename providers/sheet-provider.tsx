@@ -62,6 +62,30 @@ import { NewOrderingruleSheet } from "@/features/orderingrules/components/new-or
 import { EditOrderingruleSheet } from "@/features/orderingrules/components/edit-orderingrule-sheet";
 import { NewShippingSheet } from "@/features/shipping/components/new-shipping-sheet";
 import { EditShippingSheet } from "@/features/shipping/components/edit-shipping-sheet";
+import { NewTimewindowSheet } from "@/features/timewindow/components/new-timewindow-sheet";
+import { EditTimewindowSheet } from "@/features/timewindow/components/edit-timewindow-sheet";
+import { NewPaymenttermSheet } from "@/features/paymentterms/components/new-paymentterm-sheet";
+import { EditPaymenttermSheet } from "@/features/paymentterms/components/edit-paymentterm-sheet";
+import { NewVehicleselectionSheet } from "@/features/vehicleselections/components/new-vehicleselection-sheet";
+import { EditVehicleselectionSheet } from "@/features/vehicleselections/components/edit-vehicleselection-sheet";
+import { NewSalesbatcheSheet } from "@/features/salesbatches/components/new-salesbatche-sheet";
+import { EditSalesbatcheSheet } from "@/features/salesbatches/components/edit-salesbatche-sheet";
+import { NewCashaccountSheet } from "@/features/cashaccounts/components/new-cashaccount-sheet";
+import { EditCashaccountSheet } from "@/features/cashaccounts/components/edit-cashaccount-sheet";
+import { NewFacilityexpenseSheet } from "@/features/facilityexpenses/components/new-facilityexpense-sheet";
+import { EditFacilityexpenseSheet } from "@/features/facilityexpenses/components/edit-facilityexpense-sheet";
+import { NewCo2facilitieSheet } from "@/features/co2facilities/components/new-co2facilitie-sheet";
+import { EditCo2facilitieSheet } from "@/features/co2facilities/components/edit-co2facilitie-sheet";
+import { NewCo2processingSheet } from "@/features/co2processings/components/new-co2processing-sheet";
+import { EditCo2processingSheet } from "@/features/co2processings/components/edit-co2processing-sheet";
+import { NewProductflowSheet } from "@/features/productflows/components/new-productflow-sheet";
+import { EditProductflowSheet } from "@/features/productflows/components/edit-productflow-sheet";
+import { NewLocationgroupSheet } from "@/features/locationgroups/components/new-locationgroup-sheet";
+import { EditLocationgroupSheet } from "@/features/locationgroups/components/edit-locationgroup-sheet";
+import { NewDemandforecastSheet } from "@/features/demandforecast/components/new-demandforecast-sheet";
+import { EditDemandforecastSheet } from "@/features/demandforecast/components/edit-demandforecast-sheet";
+import { NewBomSheet } from "@/features/boms/components/new-bom-sheet";
+import { EditBomSheet } from "@/features/boms/components/edit-bom-sheet";
 
 export const SheetProvider = () => {
   const isMounted = useMountedState();
@@ -161,6 +185,42 @@ export const SheetProvider = () => {
 
       <NewShippingSheet />
       <EditShippingSheet />
+
+      <NewTimewindowSheet />
+      <EditTimewindowSheet />
+
+      <NewPaymenttermSheet />
+      <EditPaymenttermSheet />
+
+      <NewSalesbatcheSheet />
+      <EditSalesbatcheSheet />
+
+      <NewVehicleselectionSheet />
+      <EditVehicleselectionSheet />
+
+      <NewCo2facilitieSheet />
+      <EditCo2facilitieSheet />
+      
+      <NewCo2processingSheet />
+      <EditCo2processingSheet />
+
+      <NewProductflowSheet />
+      <EditProductflowSheet />
+
+      <NewCashaccountSheet />
+      <EditCashaccountSheet />
+
+      <NewFacilityexpenseSheet />
+      <EditFacilityexpenseSheet />
+
+      <NewLocationgroupSheet />
+      <EditLocationgroupSheet />
+
+      <NewDemandforecastSheet />
+      <EditDemandforecastSheet />
+
+      <NewBomSheet />
+      <EditBomSheet />
     </>
   );
 };

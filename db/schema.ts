@@ -314,6 +314,7 @@ export const groupCustomers = pgTable(
     indexGroup: sql`CREATE INDEX idx_group_customers_group_id ON ${table}(${table.groupId})`
   })
 );
+export const insertGroupCustomerSchema = createInsertSchema(groupCustomers);
 
 // Intermediate table for groups and sites
 export const groupSites = pgTable(
@@ -331,7 +332,7 @@ export const groupSites = pgTable(
     indexGroup: sql`CREATE INDEX idx_group_sites_group_id ON ${table}(${table.groupId})`
   })
 );
-
+export const insertGroupSiteSchema = createInsertSchema(groupSites);
 // Intermediate table for groups and suppliers
 export const groupSuppliers = pgTable(
   'group_suppliers',
@@ -348,7 +349,7 @@ export const groupSuppliers = pgTable(
     indexGroup: sql`CREATE INDEX idx_group_suppliers_group_id ON ${table}(${table.groupId})`
   })
 );
-
+export const insertGroupSupplierSchema = createInsertSchema(groupSuppliers);
 // Intermediate table for groups and other groups
 export const groupGroups = pgTable(
   'group_groups',
@@ -366,7 +367,7 @@ export const groupGroups = pgTable(
     indexChildGroup: sql`CREATE INDEX idx_group_groups_child_group_id ON ${table}(${table.childGroupId})`
   })
 );
-
+export const insertGroupGroupSchema = createInsertSchema(groupGroups);
 export const products = pgTable(
   'products',
   {
@@ -417,7 +418,7 @@ export const productGroupProducts = pgTable(
     productIdIdx: index('idx_product_id').on(table.productId)
   })
 );
-
+export const insertProductGroupProductSchema = createInsertSchema(productGroupProducts);
 // Add relations
 export const productGroupsRelations = relations(productGroups, ({ many }) => ({
   products: many(productGroupProducts)
@@ -494,7 +495,7 @@ export const productFlows = pgTable(
     };
   }
 );
-
+export const insertProductFlowSchema = createInsertSchema(productFlows);
 export const productStorages = pgTable(
   'product_storages',
   {
@@ -615,7 +616,7 @@ export const periodGroupPeriodsRelations = relations(
     })
   })
 );
-
+export const insertPeriodGroupPeriodSchema = createInsertSchema(periodGroupPeriods);
 export const suppliers = pgTable(
   'suppliers',
   {
@@ -654,7 +655,7 @@ export const supplierProducts = pgTable(
     productIdIdx: index('idx_supplier_products_product_id').on(table.productId)
   })
 );
-
+export const insertSupplierProductSchema = createInsertSchema(supplierProducts);
 // Add relations
 export const suppliersRelations = relations(suppliers, ({ many }) => ({
   products: many(supplierProducts)
@@ -677,6 +678,7 @@ export const supplierProductsRelations = relations(
     })
   })
 );
+
 
 export const locationGroups = pgTable(
   'location_groups',
@@ -764,7 +766,7 @@ export const sourcing = pgTable(
     )
   })
 );
-
+export const insertSourcingSchema = createInsertSchema(sourcing);
 export const unitConversions = pgTable(
   'unit_conversions',
   {
@@ -1025,7 +1027,7 @@ export const paths = pgTable(
     vehicleTypeIdIdx: index('idx_paths_vehicle_type_id').on(table.vehicleTypeId)
   })
 );
-
+export const insertPathSchema = createInsertSchema(paths);
 export const production = pgTable(
   'production',
   {
@@ -1067,7 +1069,7 @@ export const production = pgTable(
     )
   })
 );
-
+export const insertProductionSchema = createInsertSchema(production);
 export const vehicleTypes = pgTable(
   'vehicle_types',
   {
@@ -1318,7 +1320,7 @@ export const co2Emissions = pgTable(
     };
   }
 );
-
+export const insertCo2EmissionsSchema = createInsertSchema(co2Emissions);
 export const co2Processing = pgTable(
   'co2_processing',
   {
@@ -1345,7 +1347,7 @@ export const co2Processing = pgTable(
     };
   }
 );
-
+export const insertCo2ProcessingSchema = createInsertSchema(co2Processing);
 export const demandForecast = pgTable(
   'demand_forecast',
   {
@@ -1370,7 +1372,7 @@ export const demandForecast = pgTable(
     };
   }
 );
-
+export const insertDemandForecastSchema = createInsertSchema(demandForecast);
 export const events = pgTable(
   'events',
   {
@@ -1393,7 +1395,7 @@ export const events = pgTable(
     };
   }
 );
-
+export const insertEventsSchema = createInsertSchema(events);
 export const fleets = pgTable(
   'fleets',
   {
@@ -1463,7 +1465,7 @@ export const inventory = pgTable(
     };
   }
 );
-
+export const insertInventorySchema = createInsertSchema(inventory);
 export const loadingUnloadingGates = pgTable(
   'loading_unloading_gates',
   {
@@ -1576,7 +1578,7 @@ export const paymentTerms = pgTable(
     };
   }
 );
-
+export const insertPaymentTermsSchema = createInsertSchema(paymentTerms);
 export const processingTime = pgTable(
   'processing_time',
   {
@@ -1622,8 +1624,8 @@ export const shipping = pgTable(
     parameters: jsonb('parameters'), // JSONB field for policy-specific parameters
     priority: varchar('priority', { length: 50 }).notNull(), // Priority for shipping (e.g., FIFO, ELT, Big first)
     daysOfWeek: jsonb('days_of_week'), // JSONB field specifying days of the week when shipping is allowed
-    startTime: timestamp('start_time').notNull(), // Start time for shipping within a day
-    endTime: timestamp('end_time').notNull(), // End time for shipping within a day
+    startTime: timestamp('start_time').defaultNow(), // Start time for shipping within a day
+    endTime: timestamp('end_time').defaultNow(), // End time for shipping within a day
     timePeriodId: integer('time_period_id')
       .notNull()
       .references(() => periods.id), // Foreign key to Periods table
@@ -1646,7 +1648,7 @@ export const sourcingPolicies = pgTable(
     destinationId: integer('destination_id')
       .notNull()
       .references(() => facilities.id), // Foreign key to Facilities table for the delivery destination
-    sources: jsonb('sources').notNull(), // JSONB field specifying the list of possible sources
+    sources: jsonb('sources'), // JSONB field specifying the list of possible sources
     productId: integer('product_id')
       .notNull()
       .references(() => products.id), // Foreign key to Products table
@@ -1665,6 +1667,7 @@ export const sourcingPolicies = pgTable(
     };
   }
 );
+export const insertSourcingPoliciesSchema = createInsertSchema(sourcingPolicies);
 
 export const tariffs = pgTable(
   'tariffs',
@@ -1699,7 +1702,7 @@ export const tariffs = pgTable(
     };
   }
 );
-
+export const insertTariffsSchema = createInsertSchema(tariffs);
 export const timeWindows = pgTable(
   'time_windows',
   {
@@ -1709,8 +1712,8 @@ export const timeWindows = pgTable(
       .references(() => facilities.id), // Foreign key to Facilities table
     operation: varchar('operation', { length: 50 }).notNull(), // Type of operation (Processing, Generating Orders, Production, Receiving & Unloading)
     daysOfWeek: jsonb('days_of_week').notNull(), // JSONB field specifying days of the week for the time window
-    startTime: timestamp('start_time').notNull(), // Start of the operating hours
-    endTime: timestamp('end_time').notNull(), // End of the operating hours
+    startTime: timestamp('start_time').defaultNow(), // Start of the operating hours
+    endTime: timestamp('end_time').defaultNow(), // End of the operating hours
     timePeriodId: integer('time_period_id')
       .notNull()
       .references(() => periods.id) // Foreign key to Periods table
@@ -1723,6 +1726,7 @@ export const timeWindows = pgTable(
     };
   }
 );
+export const insertTimeWindowsSchema = createInsertSchema(timeWindows);
 
 export const vehicleSelectionMode = pgTable(
   'vehicle_selection_mode',
@@ -1745,6 +1749,7 @@ export const vehicleSelectionMode = pgTable(
     };
   }
 );
+export const insertVehicleSelectionModeSchema = createInsertSchema(vehicleSelectionMode);
 
 export const accounts = pgTable('accounts', {
   id: text('id').primaryKey(),

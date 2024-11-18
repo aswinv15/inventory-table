@@ -31,13 +31,24 @@ import productStorages from './productstorages'
 import sitestatechanges from './sitestatechanges'
 import production_no from './production_no'
 import periodgroups from './periodgroups'
-import productgroups from './productgroups'
 import milkRuns from './milkruns'
 import fleets from './fleets'
 import processingTime from './processingtime'
 import loadingUnloadingGates from './loadingunloadinggates'
 import orderingRules from './orderingrules'
 import shipping from './shipping'
+import timeWindows from './timewindow'
+import paymentTerms from './paymentterms'
+import salesBatches from './salesbatches'
+import vehiclesSelections from './vehicleselections'
+import boms from './boms'
+import facilityExpenses from './facilityexpenses'
+import locationGroups from './locationgroups'
+import demandForecasts from './demandforecasts'
+import cashAccounts from './cashaccounts'
+import productGroups from './productgroups'
+import co2Facilities from './co2facilities'
+import co2Processing from './co2processings'
 
 export const runtime = 'nodejs';
 
@@ -75,13 +86,24 @@ const routes = app
   .route('/sitestatechanges', sitestatechanges)
   .route('/production_no', production_no)
   .route('/periodgroups', periodgroups)
-  .route('/productgroups', productgroups)
   .route('/milkruns', milkRuns)
   .route('/fleets', fleets)
   .route('/processingtime', processingTime)
   .route('/loadingunloadinggates', loadingUnloadingGates)
   .route('/orderingrules', orderingRules)
   .route('/shipping', shipping)
+  .route('/timewindows', timeWindows)
+  .route('/paymentterms', paymentTerms)
+  .route('/salesbatches', salesBatches)
+  .route('/vehicleselections', vehiclesSelections)
+  .route('/boms', boms)
+  .route('/facilityexpenses', facilityExpenses)
+  .route('/locationgroups', locationGroups)
+  .route('/demandforecasts', demandForecasts)
+  .route('/cashaccounts', cashAccounts)
+  .route('/productgroups', productGroups)
+  .route('/co2facilities', co2Facilities)
+  .route('/co2processing', co2Processing)
 export const GET = handle(app);
 export const POST = handle(app);
 export const PATCH = handle(app);

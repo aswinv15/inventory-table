@@ -1,5 +1,5 @@
 {
-  "id": "25299fbc-bf11-47f2-9e23-fd7d1f4b5c4f",
+  "id": "4b279ebc-73b0-458d-88b3-06ed83652b10",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -5756,13 +5756,15 @@
           "name": "start_time",
           "type": "timestamp",
           "primaryKey": false,
-          "notNull": true
+          "notNull": false,
+          "default": "now()"
         },
         "end_time": {
           "name": "end_time",
           "type": "timestamp",
           "primaryKey": false,
-          "notNull": true
+          "notNull": false,
+          "default": "now()"
         },
         "time_period_id": {
           "name": "time_period_id",
@@ -6133,7 +6135,7 @@
           "name": "sources",
           "type": "jsonb",
           "primaryKey": false,
-          "notNull": true
+          "notNull": false
         },
         "product_id": {
           "name": "product_id",
@@ -6646,13 +6648,15 @@
           "name": "start_time",
           "type": "timestamp",
           "primaryKey": false,
-          "notNull": true
+          "notNull": false,
+          "default": "now()"
         },
         "end_time": {
           "name": "end_time",
           "type": "timestamp",
           "primaryKey": false,
-          "notNull": true
+          "notNull": false,
+          "default": "now()"
         },
         "time_period_id": {
           "name": "time_period_id",
