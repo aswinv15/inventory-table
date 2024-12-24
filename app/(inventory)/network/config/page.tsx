@@ -52,7 +52,7 @@ export default function Agmap() {
 
   return (
     <div>
-      <div className="flex h-full ">
+      <div className="">
         {/* <SidebarDemo sidebarMenu={menus} /> */}
         <div className="flex flex-1 flex-col overflow-y-auto bg-slate-50">
           <div className="m-4">

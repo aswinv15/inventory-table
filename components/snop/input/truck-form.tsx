@@ -1,7 +1,7 @@
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 
-export default function TruckInput({ truck }) {
+export default function TruckInput() {
 
   return (
     <div className="grid w-full  gap-10">
@@ -11,7 +11,7 @@ export default function TruckInput({ truck }) {
           <p className="text-gray-400 text-sm">inculing Fabrication</p>
         </Label>
         <Input
-          id="pc"
+          id=""
           name="purchase_cost"
           // defaultValue={truck["purchase_cost"]}
           className="text-lg text-gray-500 text-center"
@@ -24,7 +24,7 @@ export default function TruckInput({ truck }) {
           <p className="text-gray-400 text-sm"></p>
         </Label>
         <Input
-          id="mileagewithload"
+          id=""
           name="mileage_with_load"
           // defaultValue={truck["mileage_with_load"]}
           className="text-lg text-gray-500 text-center"
@@ -37,7 +37,7 @@ export default function TruckInput({ truck }) {
           <p className="text-gray-400 text-sm"></p>
         </Label>
         <Input
-          id="mileagewithoutload"
+          id=""
           name="mileage_without_load"
           // defaultValue={truck["mileage_without_load"]}
           className="text-lg text-gray-500 text-center"
@@ -50,7 +50,7 @@ export default function TruckInput({ truck }) {
           <p className="text-gray-400 text-sm"></p>
         </Label>
         <Input
-          id="main"
+          id=""
           name="maintenance"
           // defaultValue={truck["maintenance"]}
           className="text-lg text-gray-500 text-center"
@@ -63,7 +63,7 @@ export default function TruckInput({ truck }) {
           <p className="text-gray-400 text-sm"></p>
         </Label>
         <Input
-          id="cap"
+          id=""
           name="capacity"
           // defaultValue={truck["capacity"]}
           className="text-lg text-gray-500 text-center"
@@ -76,7 +76,7 @@ export default function TruckInput({ truck }) {
           <p className="text-gray-400 text-sm"></p>
         </Label>
         <Input
-          id="annual"
+          id=""
           name="annual_distance"
           // defaultValue={truck["annual_distance"]}
           className="text-lg text-gray-500 text-center"

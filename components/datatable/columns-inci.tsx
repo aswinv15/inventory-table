@@ -191,7 +191,8 @@ export const columns: ColumnDef<Task>[] = [
       // console.log(row.original)
       return (
         <Link
-          href=''
+          to={`/snop/incidents/${row.original.id}/${row.original.label}`}
+          href=""
           // to={`/snop/incidents/${row.original.id}/${row.original.label}`}
           className="flex space-x-2 "
         >
@@ -199,7 +200,7 @@ export const columns: ColumnDef<Task>[] = [
             Open Event
           </Button>
         </Link>
-      )
+      );
     },
   },
   {

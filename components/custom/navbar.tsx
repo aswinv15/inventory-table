@@ -33,13 +33,13 @@ export const Navbar = () => {
           <History user={user.user} />
           {/* </SignedIn> */}
           <div className="flex flex-row gap-2 items-center">
-            <div className="text-sm dark:text-zinc-300">Next.js Chatbot</div>
+            <div className="text-sm dark:text-zinc-300">Chat History</div>
           </div>
         </div>
         <NavigationRisk />
         <div className="flex flex-row gap-2 items-center">
           <UserButton />
-          <ThemeToggle />
+          {/* <ThemeToggle /> */}
         </div>
       </div>
     </>

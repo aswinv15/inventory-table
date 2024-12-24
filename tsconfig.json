@@ -22,6 +22,16 @@
       "@/*": ["./*"]
     }
   },
-  "include": ["next-env.d.ts", "**/*.ts","**/*.md", "**/*.tsx", ".next/types/**/*.ts", "app/blue/components/Button.tsx", "app/blue/layout.tsx", "app/blue/lib/sections.ts"],
+  "include": [
+    "next-env.d.ts",
+    "**/*.ts",
+    "**/*.md",
+    "**/*.tsx",
+    ".next/types/**/*.ts",
+    "app/blue/components/Button.tsx",
+    "app/blue/layout.tsx",
+    "app/blue/lib/sections.ts",
+    "app/(sample)/opt/waterfall.tsx"
+  ],
   "exclude": ["node_modules"]
 }

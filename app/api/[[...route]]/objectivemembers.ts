@@ -37,7 +37,7 @@ const app = new Hono()
         })
         .from(objectiveMembers);
 
-      console.log('Fetched data:', data);
+      // console.log('Fetched data:', data);
       return c.json({ data });
     } catch (error) {
       console.error('Error fetching data:', error);
@@ -71,7 +71,7 @@ const app = new Hono()
           return c.json({ error: 'Not found' }, 404);
         }
 
-        console.log('Fetched data by ID:', data);
+        // console.log('Fetched data by ID:', data);
         return c.json({ data });
       } catch (error) {
         console.error('Error fetching data by ID:', error);

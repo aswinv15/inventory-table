@@ -1,12 +1,12 @@
 import { create } from "zustand";
 
-type NewvehicleTypeState = {
+type useNewvehicleTypeState = {
   isOpen: boolean;
   onOpen: () => void;
   onClose: () => void;
 };
 
-export const useNewvehicleType = create<NewvehicleTypeState>((set) => ({
+export const useNewvehicleType = create<useNewvehicleTypeState>((set) => ({
   isOpen: false,
   onOpen: () => set({ isOpen: true }),
   onClose: () => set({ isOpen: false }),

@@ -21,15 +21,41 @@ export const meetingTabs = [
 ]
 export const kpiService_m = [
   {
-    Name: "Current backorders",
+    Name: 'Current backorders',
     container: (
       <WrapperMultiBarChart
         category={orderTrendCategories_m}
         series={orderTrendSeries_m}
       />
-    ),
+    )
   },
-
+  {
+    Name: 'Current backorders',
+    container: (
+      <WrapperMultiBarChart
+        category={orderTrendCategories_m}
+        series={orderTrendSeries_m}
+      />
+    )
+  },
+  {
+    Name: 'Current backorders',
+    container: (
+      <WrapperMultiBarChart
+        category={orderTrendCategories_m}
+        series={orderTrendSeries_m}
+      />
+    )
+  },
+  {
+    Name: 'Current backorders',
+    container: (
+      <WrapperMultiBarChart
+        category={orderTrendCategories_m}
+        series={orderTrendSeries_m}
+      />
+    )
+  }
 ];
 
 export const kpiInv_m = [

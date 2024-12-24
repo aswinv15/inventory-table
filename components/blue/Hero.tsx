@@ -46,7 +46,7 @@ export function Hero() {
                   <Link href="/risk/analysis">Availability Analytics</Link>
                 </Button>
                 <Button className={undefined}>
-                  <Link href="">e2e Supply Chain</Link>
+                  <Link href="/agent/dashboard">WM Agent</Link>
                 </Button>
               </div>
             </div>

@@ -2,8 +2,8 @@
 
 
 import React, { useState } from "react";
-import { AgCharts } from "ag-charts-react";
-import { AgChartOptions } from "ag-charts-community";
+import { AgChartsReact } from "ag-charts-react";
+import { AgChartOptions } from "ag-charts-enterprise";
 import { getData } from '@/app/(inventory)/agchart/data';
 export default function ChartExample () {
   const [options, setOptions] = useState<AgChartOptions>({
@@ -49,5 +49,5 @@ export default function ChartExample () {
     ],
     
   });
-  return <AgCharts options={options} />;
+  return <AgChartsReact options={options} />;
 };

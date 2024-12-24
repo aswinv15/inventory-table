@@ -1,9 +1,9 @@
-import WrapperPieChart from  '~/kendo/charts/pie/WrapperPieChart'
-import WrapperMultiBarChart from '~/kendo/charts/bar/WrapperBarChart'
-import WrapperMultiStackColChart from '~/kendo/charts/stackcol/WrapperStackColChart'
-import WrapperWaterfallChart from '~/kendo/charts/waterfall/WrapperWaterfallChart'
+import WrapperPieChart from  '@/app/kendo/charts/pie/WrapperPieChart'
+import WrapperMultiBarChart from '@/app/kendo/charts/bar/WrapperBarChart'
+import WrapperMultiStackColChart from '@/app/kendo/charts/stackcol/WrapperStackColChart'
+import WrapperWaterfallChart from '@/app/kendo/charts/waterfall/WrapperWaterfallChart'
 
-import {inventoryValuation,costTrendCategories_m,costTrendSeries_m,itemCostCategories_m,itemCostTrendSeries_m} from '~/kendo/rawData/analysis/inventoryCostAnalysis'
+import {inventoryValuation,costTrendCategories_m,costTrendSeries_m,itemCostCategories_m,itemCostTrendSeries_m} from '@/app/kendo/rawData/analysis/inventoryCostAnalysis'
 
 export const reviewTabs = [
   { name: 'Month', href: '#', current: true },

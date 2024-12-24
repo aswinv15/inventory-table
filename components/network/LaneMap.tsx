@@ -1,4 +1,4 @@
-import { AgCharts } from 'ag-charts-react' // Check if this import is correct
+import { AgChartsReact } from 'ag-charts-react' // Check if this import is correct
 
 // import { topology } from './topology'
 import {
@@ -11,7 +11,7 @@ import {
 import 'ag-charts-enterprise' // Import AgCharts Enterprise if needed
 
 import { ProgressBar } from '@progress/kendo-react-progressbars'
-import { AgChartOptions } from 'ag-charts-community'
+// import { AgChartOptions } from 'ag-charts-enterprise'
 
 const flightData = [
   { name: 'SHA-FL', duration: 20 },
@@ -207,7 +207,7 @@ export default function LaneMap() {
       </ul>
 
       <div className="w-full h-[900px]">
-        <AgCharts options={options as AgChartOptions} />
+        <AgChartsReact options={options} />
      
       </div>
     </div>

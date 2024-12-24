@@ -1,5 +1,5 @@
 import { useState, Fragment } from 'react'
-import { AgCharts } from 'ag-charts-react'
+import { AgChartsReact } from 'ag-charts-react'
 
 import {
   generatedDeficitData,
@@ -434,7 +434,7 @@ export default function InvExcessDefict() {
             </TableBody>
           </Table>
           <div className="w-full h-[500px]">
-            <AgCharts options={options} />
+            <AgChartsReact options={options} />
           </div>
         </div>
         <div className="w-full bg-white rounded-b-md border">
@@ -472,7 +472,7 @@ export default function InvExcessDefict() {
             </Table>
           </div>
           <div className="w-full h-[500px]">
-            <AgCharts options={options2} />
+            <AgChartsReact options={options2} />
           </div>
         </div>
       </div>

@@ -11,7 +11,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { vehicleTypes as vehicleTypeSchema } from '@/db/schema';
 import { useBulkCreatevehicleTypes } from '@/features/vehicleTypes/api/use-bulk-create-vehicleTypes';
 import { useBulkDeletevehicleTypes } from '@/features/vehicleTypes/api/use-bulk-delete-vehicleTypes';
-import { useGetvehicleTypes } from '@/features/vehicleTypes/api/use-get-vehicleTypes';
+import { useGetVehicleTypes } from '@/features/vehicleTypes/api/use-get-vehicleTypes';
 import { useNewvehicleType } from '@/features/vehicleTypes/hooks/use-new-vehicleType';
 
 // import { useSelectAccount } from '@/features/accounts/hooks/use-select-account';
@@ -53,7 +53,7 @@ export default function VehicleTypesPage() {
   const newvehicleType = useNewvehicleType();
   const createvehicleTypes = useBulkCreatevehicleTypes();
   const deletevehicleTypes = useBulkDeletevehicleTypes();
-  const vehicleTypesQuery = useGetvehicleTypes();
+  const vehicleTypesQuery = useGetVehicleTypes();
   const vehicleTypes = vehicleTypesQuery.data || [];
   
 

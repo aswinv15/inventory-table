@@ -1,6 +1,16 @@
-'use client';
-import React from "react";
+import { SidebarDesktop } from '@/components/sidebar-desktop';
+import { Header } from '@/components/header';
+interface ChatLayoutProps {
+  children: React.ReactNode;
+}
 
-export default function layout({ children }: { children: React.ReactNode }) {
-  return <div>{children}</div>;
+export default async function ChatLayout({ children }: ChatLayoutProps) {
+  return (
+    <div className="h-full">
+      {/* <Header /> */}
+      {/* <div className="relative flex h-[calc(100vh_-_theme(spacing.16))] overflow-hidden"> */}
+      {/* <SidebarDesktop /> */}
+      {children}
+    </div>
+  );
 }

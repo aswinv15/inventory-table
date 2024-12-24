@@ -1,8 +1,8 @@
-import WrapperMultiColumnChart from '~/kendo/charts/column/WrapperColumnChart'
-import WrapperPieChart from  '~/kendo/charts/pie/WrapperPieChart'
-import WrapperMultiStackColChart from '~/kendo/charts/stackcol/WrapperStackColChart'
-import WrapperWaterfallChart from '~/kendo/charts/waterfall/WrapperWaterfallChart'
-import {onTimeCategories_m,onTimeSeries_m,rejectCategories_m,rejectSeries_m,tierSupplierData,topSuppliersData} from '~/kendo/rawData/analysis/supplyAnalysis'
+import WrapperMultiColumnChart from '@/app/kendo/charts/column/WrapperColumnChart'
+import WrapperPieChart from  '@/app/kendo/charts/pie/WrapperPieChart'
+import WrapperMultiStackColChart from '@/app/kendo/charts/stackcol/WrapperStackColChart'
+import WrapperWaterfallChart from '@/app/kendo/charts/waterfall/WrapperWaterfallChart'
+import {onTimeCategories_m,onTimeSeries_m,rejectCategories_m,rejectSeries_m,tierSupplierData,topSuppliersData} from '@/app/kendo/rawData/analysis/supplyAnalysis'
 
 
 export const reviewTabs = [

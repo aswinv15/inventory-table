@@ -1,7 +1,6 @@
 import {
   AdjustmentsHorizontalIcon,
-  ChartBarIcon
-, PresentationChartLineIcon , TableCellsIcon } from '@heroicons/react/24/outline';
+  ChartBarIcon, PresentationChartLineIcon , TableCellsIcon } from '@heroicons/react/24/outline';
 import { LifeBuoy, SquareUser } from 'lucide-react'
 import { cookies } from 'next/headers';
 import { GrTree } from 'react-icons/gr';

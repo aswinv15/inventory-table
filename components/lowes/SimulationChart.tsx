@@ -1,5 +1,5 @@
 import React, { Fragment, useState, useCallback, useRef } from 'react'
-import { AgCharts } from 'ag-charts-react'
+import { AgChartsReact } from 'ag-charts-react'
 import { getData } from '@/app/data/agGrid/snop/inventory/simulationChart'
 
 function tooltipRenderer({ datum, xKey, yKey }) {
@@ -113,7 +113,7 @@ export default function SimulationChart() {
 
   return (
     <div className="flex h-[700px] flex-col">
-      <AgCharts ref={chartRef} options={options} />
+      <AgChartsReact ref={chartRef} options={options} />
     </div>
   )
 }

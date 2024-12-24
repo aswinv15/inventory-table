@@ -49,6 +49,7 @@ import cashAccounts from './cashaccounts'
 import productGroups from './productgroups'
 import co2Facilities from './co2facilities'
 import co2Processing from './co2processings'
+import inventorys from './inventorys'
 
 export const runtime = 'nodejs';
 
@@ -104,6 +105,11 @@ const routes = app
   .route('/productgroups', productGroups)
   .route('/co2facilities', co2Facilities)
   .route('/co2processing', co2Processing)
+  .route('/inventorys', inventorys)
+
+
+
+
 export const GET = handle(app);
 export const POST = handle(app);
 export const PATCH = handle(app);

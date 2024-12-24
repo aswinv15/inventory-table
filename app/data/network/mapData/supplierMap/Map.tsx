@@ -1,4 +1,4 @@
-import { AgCharts } from 'ag-charts-react'
+import { AgChartsReact } from 'ag-charts-react'
 
 import { data } from './data'
 // import { topology } from './topology'
@@ -7,7 +7,7 @@ import { topology, backgroundtopology, capitals } from './topology'
 import 'ag-charts-enterprise' // Import AgCharts Enterprise if needed
 
 import { ProgressBar } from '@progress/kendo-react-progressbars'
-import { AgChartOptions } from 'ag-charts-community';
+import { AgChartOptions } from 'ag-charts-enterprise';
 
 
 
@@ -231,7 +231,7 @@ export default function ChartComponent() {
       </ul>
       {/* <CardLayout kpiData={stats} /> */}
       <div className="w-full h-[900px]">
-        <AgCharts options={options as AgChartOptions} />
+        <AgChartsReact options={options as AgChartOptions} />
       </div>
     </div>
   )

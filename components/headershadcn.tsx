@@ -3,7 +3,9 @@ import * as React from 'react';
 import { NavigationRisk } from './navigationrisk';
 import { ThemeToggle } from './theme-toggle';
 
-export function Header() {
+export function Header(
+  { title, navigation }: { title: string; navigation: any }
+) {
   return (
     <header className="sticky top-0 z-50 flex items-center justify-between max-w-full h-16 px-4 border-b shrink-0 bg-white">
       <div className="flex items-center text-sky-500 text-lg ">

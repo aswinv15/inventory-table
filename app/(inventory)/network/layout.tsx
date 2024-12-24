@@ -74,15 +74,15 @@ export default function Page({ children }: { children: React.ReactNode }) {
   // const defaultCollapsed = collapsed ? JSON.parse(collapsed.value) : undefined;
 
   return (
-    <div className="h-full">
-      <Header title="Inventory Optimizer" navigation={navigation} />
-      <div className="flex max-h-full">
+    <div className="">
+      {/* <Header title="Inventory Optimizer" navigation={navigation} /> */}
+      <div className="">
         <SidebarShadcn
           sidebarMenu={senariomenus}
           bottomNavItems={bottomNavItems}
         />
 
-        <main className=" pl-[57px] min-w-full "> {children}</main>
+        <main className=" pl-[58px] min-w-full">{children}</main>
       </div>
     </div>
   );

@@ -33,7 +33,7 @@ const app = new Hono()
         })
         .from(linearRanges);
 
-      console.log('Fetched data:', data);
+      // console.log('Fetched data:', data);
       return c.json({ data });
     } catch (error) {
       console.error('Error fetching data:', error);
